@@ -159,16 +159,17 @@ rules:
           Content-Type:
             - "application/json"
           NextPageUri:
-            - 'http://{{ hostname }}:{{ env "PORT" }}/api/v1.0/test-cel-tenant-id/activity/feed/subscriptions/content?contentType=Audit.SharePoint&startTime={{ .request.vars.startTime }}&endTime={{ .request.vars.endTime }}&nextPage=2023071100R022885001761'
+            - 'http://{{ hostname }}:{{ env "PORT" }}/api/v1.0/test-cel-tenant-id/activity/feed/subscriptions/content?contenttype=Audit.SharePoint&starttime={{ .request.vars.startTime }}&endtime={{ .request.vars.endTime }}&nextpage=2023071100R022885001761'
         body: |-
           [{"contentType": "Audit.Sharepoint","contentId": "celid1","contentUri": "http://{{ hostname }}:{{ env "PORT" }}/api/v1.0/celsp1/activity/feed/audit/celid1","contentCreated": "{{ .request.vars.endTime }}","contentExpiration": "2199-05-30T17:35:00.000Z"}]
   - path: /api/v1.0/test-cel-tenant-id/activity/feed/subscriptions/content
     methods: [GET]
     query_params:
-      contentType: "Audit.SharePoint"
-      startTime: "{startTime:.*}"
-      endTime: "{endTime:.*}"
-      nextPage: "2023071100R022885001761"
+      # New, undocumented, syntax returned in NextPageUri.
+      contenttype: "Audit.SharePoint"
+      starttime: "{startTime:.*}"
+      endtime: "{endTime:.*}"
+      nextpage: "2023071100R022885001761"
     request_headers:
       Authorization:
         - "Bearer CELtoken"
@@ -213,6 +214,12 @@ rules:
                   "ObjectId": "https://testsiem-my.sharepoint.com/personal/asr_testsiem_onmicrosoft_com/_layouts/15/onedrive.aspx",
                   "Id": "99d005e6-a4c6-46fd-117c-08d7abeceab5",
                   "CorrelationId": "622b339f-4000-a000-f25f-92b3478c7a25",
+                  "ExtendedProperties": [
+                      {
+                          "Name": "additionalDetails",
+                          "Value": "{\"DeviceId\":\"62eedfc0-b73c-206c-a59d-16457c7ebcd8\",\"DeviceOSType\":\"Linux\",\"DeviceTrustType\":\"\"}"
+                      }
+                  ],
                   "RecordType": 4
               },
               {
@@ -235,6 +242,12 @@ rules:
                   "Operation": "PageViewed",
                   "Id": "99d005e6-a4c6-46fd-117c-08d7abeceab5",
                   "CorrelationId": "622b339f-4000-a000-f25f-92b3478c7a25",
+                  "ExtendedProperties": [
+                      {
+                          "Name": "additionalDetails",
+                          "Value": "{\"DeviceId\":\"62eedfc0-b73c-206c-a59d-16457c7ebcd8\",\"DeviceOSType\":\"Linux\",\"DeviceTrustType\":\"\"}"
+                      }
+                  ],
                   "ItemType": "Page"
               },
               {
@@ -257,6 +270,12 @@ rules:
                   "ClientIP": "213.97.47.133",
                   "Operation": "PageViewed",
                   "CorrelationId": "622b339f-4000-a000-f25f-92b3478c7a25",
+                  "ExtendedProperties": [
+                      {
+                          "Name": "additionalDetails",
+                          "Value": "{\"DeviceId\":\"62eedfc0-b73c-206c-a59d-16457c7ebcd8\",\"DeviceOSType\":\"Linux\",\"DeviceTrustType\":\"\"}"
+                      }
+                  ],
                   "ItemType": "Page"
               },
               {
