@@ -77,6 +77,7 @@
             "@timestamp": "2024-08-08T09:31:22.048Z",
             "auditd": {
                 "log": {
+                    "ARCH": "x86_64",
                     "AUID": "na-uoradbdba03",
                     "EGID": "oinstall",
                     "EUID": "dllogc",
@@ -92,7 +93,7 @@
                     "a2": "242",
                     "a3": "180",
                     "items": "2",
-                    "key": "delete\"\u001dARCH=x86_64",
+                    "key": "delete",
                     "node": "praorem001",
                     "record_type": "SYSCALL",
                     "sequence": 4981103,
@@ -128,35 +129,50 @@
                 },
                 "pid": 560348
             },
+            "related": {
+                "user": [
+                    "dllogc",
+                    "na-uoradbdba03"
+                ]
+            },
             "tags": [
                 "preserve_original_event"
             ],
             "user": {
                 "audit": {
-                    "id": "1561577791"
+                    "id": "1561577791",
+                    "name": "na-uoradbdba03"
                 },
                 "effective": {
                     "group": {
-                        "id": "2007"
+                        "id": "2007",
+                        "name": "oinstall"
                     },
-                    "id": "2012"
+                    "id": "2012",
+                    "name": "dllogc"
                 },
                 "filesystem": {
                     "group": {
-                        "id": "2007"
+                        "id": "2007",
+                        "name": "oinstall"
                     },
-                    "id": "2012"
+                    "id": "2012",
+                    "name": "dllogc"
                 },
                 "group": {
-                    "id": "2007"
+                    "id": "2007",
+                    "name": "oinstall"
                 },
                 "id": "2012",
                 "saved": {
                     "group": {
-                        "id": "2007"
+                        "id": "2007",
+                        "name": "oinstall"
                     },
-                    "id": "2012"
-                }
+                    "id": "2012",
+                    "name": "dllogc"
+                },
+                "name": "dllogc"
             }
         },
         {
@@ -194,17 +210,105 @@
                 "executable": "/usr/sbin/userhelper",
                 "pid": 34165
             },
+            "related": {
+                "user": [
+                    "root",
+                    "mborden"
+                ]
+            },
             "tags": [
                 "preserve_original_event"
             ],
             "user": {
                 "audit": {
-                    "id": "1006"
+                    "id": "1006",
+                    "name": "mborden"
                 },
                 "effective": {
                     "name": "root"
                 },
                 "id": "1006",
+                "name": "root"
+            }
+        },
+        {
+            "@timestamp": "2026-01-16T02:12:18.671Z",
+            "auditd": {
+                "log": {
+                    "apparmor": "STATUS",
+                    "info": "same as current profile, skipping",
+                    "name": "/usr/lib/snapd/snap-confine//mount-namespace-capture-helper",
+                    "operation": "profile_replace",
+                    "profile": "unconfined",
+                    "record_type": "AVC",
+                    "sequence": 4375834
+                }
+            },
+            "ecs": {
+                "version": "8.17.0"
+            },
+            "event": {
+                "action": [
+                    "violated-apparmor-policy"
+                ],
+                "kind": "event",
+                "original": "type=AVC msg=audit(1768529538.671:4375834): apparmor=\"STATUS\" operation=\"profile_replace\" info=\"same as current profile, skipping\" profile=\"unconfined\" name=\"/usr/lib/snapd/snap-confine//mount-namespace-capture-helper\" pid=3469120 comm=\"apparmor_pars\""
+            },
+            "process": {
+                "name": "apparmor_pars",
+                "pid": 3469120
+            },
+            "tags": [
+                "preserve_original_event"
+            ]
+        },
+        {
+            "@timestamp": "2026-07-09T07:36:46.567Z",
+            "auditd": {
+                "log": {
+                    "AUID": "unset",
+                    "UID": "root",
+                    "record_type": "SERVICE_STOP",
+                    "sequence": 21853,
+                    "ses": "4294967295",
+                    "unit": "rsyslog"
+                }
+            },
+            "ecs": {
+                "version": "8.17.0"
+            },
+            "event": {
+                "action": [
+                    "stopped-service"
+                ],
+                "category": [
+                    "process"
+                ],
+                "kind": "event",
+                "original": "type=SERVICE_STOP msg=audit(1783582606.567:21853): pid=1 uid=0 auid=4294967295 ses=4294967295 msg='unit=rsyslog comm=\"systemd\" exe=\"/usr/lib/systemd/systemd\" hostname=? addr=? terminal=? res=success'\u001dUID=\"root\" AUID=\"unset\"",
+                "outcome": "success",
+                "type": [
+                    "end"
+                ]
+            },
+            "process": {
+                "executable": "/usr/lib/systemd/systemd",
+                "name": "systemd",
+                "pid": 1
+            },
+            "related": {
+                "user": [
+                    "root"
+                ]
+            },
+            "tags": [
+                "preserve_original_event"
+            ],
+            "user": {
+                "audit": {
+                    "id": "4294967295"
+                },
+                "id": "0",
                 "name": "root"
             }
         }

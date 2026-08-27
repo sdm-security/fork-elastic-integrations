@@ -10,6 +10,11 @@ provider "aws" {
       branch       = var.BRANCH
       build        = var.BUILD_ID
       created_date = var.CREATED_DATE
+
+      division = "engineering"
+      org      = "obs"
+      team     = "obs-ds-hosted-services"
+      project  = "integrations-aws-package"
     }
   }
 }
@@ -51,7 +56,7 @@ resource "aws_s3_object" "object" {
   bucket = aws_s3_bucket.bucket.id
   key    = "waf.log"
   source = "./files/test-waf.log"
-  depends_on = [aws_sqs_queue.queue]
+  depends_on = [aws_s3_bucket_notification.bucket_notification]
 }
 
 output "queue_url" {

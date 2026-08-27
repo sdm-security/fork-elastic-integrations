@@ -7,6 +7,11 @@ provider "aws" {
       branch       = var.BRANCH
       build        = var.BUILD_ID
       created_date = var.CREATED_DATE
+
+      division = "engineering"
+      org      = "obs"
+      team     = "security-service-integrations" # owner.github from manifest.yml
+      project  = "integrations-carbon_black_cloud-package" # name from manifest.yml
     }
   }
 }
@@ -49,7 +54,7 @@ resource "aws_s3_object" "object" {
   key    = "test-alert.log"
   source = "./files/test-alert.log"
 
-  depends_on = [aws_sqs_queue.queue]
+  depends_on = [aws_s3_bucket_notification.bucket_notification]
 }
 
 output "queue_url" {

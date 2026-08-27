@@ -7,6 +7,27 @@
             "event": {
                 "kind": "asset"
             },
+            "host": {
+                "address": [
+                    "89.160.20.156"
+                ],
+                "geo": {
+                    "city_name": "Linköping",
+                    "continent_name": "Europe",
+                    "country_iso_code": "SE",
+                    "country_name": "Sweden",
+                    "location": {
+                        "lat": 58.4167,
+                        "lon": 15.6167
+                    },
+                    "region_iso_code": "SE-E",
+                    "region_name": "Östergötland County"
+                },
+                "id": "D6DD5611-B15A-5AA1-B498-52A4CB17D18D",
+                "ip": [
+                    "89.160.20.156"
+                ]
+            },
             "jamf_pro": {
                 "inventory": {
                     "applications": [
@@ -31,6 +52,22 @@
                             "version": "1.0"
                         }
                     ],
+                    "general": {
+                        "last_ip_address": "89.160.20.156",
+                        "last_ip_address_geo": {
+                            "city_name": "Linköping",
+                            "continent_name": "Europe",
+                            "country_iso_code": "SE",
+                            "country_name": "Sweden",
+                            "location": {
+                                "lat": 58.4167,
+                                "lon": 15.6167
+                            },
+                            "region_iso_code": "SE-E",
+                            "region_name": "Östergötland County"
+                        },
+                        "report_date": "2024-06-19T15:54:37.692Z"
+                    },
                     "group_memberships": [
                         {
                             "group_id": "1",
@@ -67,6 +104,23 @@
                     ],
                     "udid": "D6DD5611-B15A-5AA1-B498-52A4CB17D18D"
                 }
+            },
+            "related": {
+                "ip": [
+                    "89.160.20.156"
+                ]
+            },
+            "user": {
+                "group": {
+                    "id": [
+                        "1",
+                        "4"
+                    ],
+                    "name": [
+                        "All Managed Clients",
+                        "Computers with updates"
+                    ]
+                }
             }
         },
         {
@@ -77,6 +131,27 @@
                 "kind": "asset",
                 "type": [
                     "user"
+                ]
+            },
+            "host": {
+                "address": [
+                    "89.160.20.156"
+                ],
+                "geo": {
+                    "city_name": "Linköping",
+                    "continent_name": "Europe",
+                    "country_iso_code": "SE",
+                    "country_name": "Sweden",
+                    "location": {
+                        "lat": 58.4167,
+                        "lon": 15.6167
+                    },
+                    "region_iso_code": "SE-E",
+                    "region_name": "Östergötland County"
+                },
+                "id": "DBAEF5A6-82D5-5327-A480-A904F42F3F98",
+                "ip": [
+                    "89.160.20.156"
                 ]
             },
             "jamf_pro": {
@@ -95,6 +170,22 @@
                         "individual_recovery_key_validity_status": "UNKNOWN",
                         "institutional_recovery_key_present": false
                     },
+                    "general": {
+                        "last_ip_address": "89.160.20.156",
+                        "last_ip_address_geo": {
+                            "city_name": "Linköping",
+                            "continent_name": "Europe",
+                            "country_iso_code": "SE",
+                            "country_name": "Sweden",
+                            "location": {
+                                "lat": 58.4167,
+                                "lon": 15.6167
+                            },
+                            "region_iso_code": "SE-E",
+                            "region_name": "Östergötland County"
+                        },
+                        "report_date": "2024-06-19T15:54:37.692Z"
+                    },
                     "id": "4",
                     "udid": "DBAEF5A6-82D5-5327-A480-A904F42F3F98",
                     "user_and_location": {
@@ -110,6 +201,9 @@
                 }
             },
             "related": {
+                "ip": [
+                    "89.160.20.156"
+                ],
                 "user": [
                     "jane.doe@jamf.com"
                 ]
@@ -130,6 +224,14 @@
                 "address": [
                     "89.160.20.156"
                 ],
+                "entity": {
+                    "attributes": {
+                        "managed": true
+                    },
+                    "lifecycle": {
+                        "last_activity": "2024-04-18T14:26:51.514Z"
+                    }
+                },
                 "geo": {
                     "city_name": "Linköping",
                     "continent_name": "Europe",
@@ -142,9 +244,14 @@
                     "region_iso_code": "SE-E",
                     "region_name": "Östergötland County"
                 },
+                "id": "5982CE36-4526-580B-B4B9-ECC6782535BC",
                 "ip": [
                     "89.160.20.156"
-                ]
+                ],
+                "name": "acme-C07DM3AZQ6NV",
+                "os": {
+                    "platform": "Mac"
+                }
             },
             "jamf_pro": {
                 "inventory": {
@@ -199,9 +306,6 @@
                     "udid": "5982CE36-4526-580B-B4B9-ECC6782535BC"
                 }
             },
-            "os": {
-                "platform": "Mac"
-            },
             "related": {
                 "ip": [
                     "89.160.20.156"
@@ -219,6 +323,14 @@
                 "address": [
                     "89.160.20.156"
                 ],
+                "entity": {
+                    "attributes": {
+                        "managed": true
+                    },
+                    "lifecycle": {
+                        "last_activity": "2024-04-18T14:26:51.514Z"
+                    }
+                },
                 "geo": {
                     "city_name": "Linköping",
                     "continent_name": "Europe",
@@ -231,9 +343,14 @@
                     "region_iso_code": "SE-E",
                     "region_name": "Östergötland County"
                 },
+                "id": "5982CE36-4526-580B-B4B9-ECC6782535BC",
                 "ip": [
                     "89.160.20.156"
-                ]
+                ],
+                "name": "acme-C07DM3AZQ6NV",
+                "os": {
+                    "platform": "Mac"
+                }
             },
             "jamf_pro": {
                 "inventory": {
@@ -296,9 +413,6 @@
                     "udid": "5982CE36-4526-580B-B4B9-ECC6782535BC"
                 }
             },
-            "os": {
-                "platform": "Mac"
-            },
             "related": {
                 "ip": [
                     "89.160.20.156"
@@ -316,9 +430,33 @@
                 ]
             },
             "host": {
+                "address": [
+                    "89.160.20.156"
+                ],
+                "geo": {
+                    "city_name": "Linköping",
+                    "continent_name": "Europe",
+                    "country_iso_code": "SE",
+                    "country_name": "Sweden",
+                    "location": {
+                        "lat": 58.4167,
+                        "lon": 15.6167
+                    },
+                    "region_iso_code": "SE-E",
+                    "region_name": "Östergötland County"
+                },
+                "id": "21ED95A7-FF9D-52BD-A55B-36D54585083A",
+                "ip": [
+                    "89.160.20.156"
+                ],
                 "mac": [
                     "88-4D-7C-74-6F-22"
-                ]
+                ],
+                "os": {
+                    "full": "sonoma",
+                    "name": "macOS",
+                    "version": "14.7.2"
+                }
             },
             "jamf_pro": {
                 "inventory": {
@@ -359,6 +497,22 @@
                             "removable": false
                         }
                     ],
+                    "general": {
+                        "last_ip_address": "89.160.20.156",
+                        "last_ip_address_geo": {
+                            "city_name": "Linköping",
+                            "continent_name": "Europe",
+                            "country_iso_code": "SE",
+                            "country_name": "Sweden",
+                            "location": {
+                                "lat": 58.4167,
+                                "lon": 15.6167
+                            },
+                            "region_iso_code": "SE-E",
+                            "region_name": "Östergötland County"
+                        },
+                        "report_date": "2024-06-19T15:54:37.692Z"
+                    },
                     "group_memberships": [
                         {
                             "group_id": "1",
@@ -409,10 +563,22 @@
                     "udid": "21ED95A7-FF9D-52BD-A55B-36D54585083A"
                 }
             },
-            "os": {
-                "full": "sonoma",
-                "name": "macOS",
-                "version": "14.7.2"
+            "related": {
+                "ip": [
+                    "89.160.20.156"
+                ]
+            },
+            "user": {
+                "group": {
+                    "id": [
+                        "1",
+                        "5"
+                    ],
+                    "name": [
+                        "All Managed Clients",
+                        "Zero Touch Devices"
+                    ]
+                }
             }
         },
         {
@@ -421,6 +587,32 @@
             },
             "event": {
                 "kind": "asset"
+            },
+            "host": {
+                "address": [
+                    "89.160.20.156"
+                ],
+                "geo": {
+                    "city_name": "Linköping",
+                    "continent_name": "Europe",
+                    "country_iso_code": "SE",
+                    "country_name": "Sweden",
+                    "location": {
+                        "lat": 58.4167,
+                        "lon": 15.6167
+                    },
+                    "region_iso_code": "SE-E",
+                    "region_name": "Östergötland County"
+                },
+                "id": "21ED95A7-FF9D-52BD-A55B-36D54585083A",
+                "ip": [
+                    "89.160.20.156"
+                ],
+                "os": {
+                    "full": "sonoma",
+                    "name": "macOS",
+                    "version": "14.7.0"
+                }
             },
             "jamf_pro": {
                 "inventory": {
@@ -436,6 +628,22 @@
                             "version": "2.4"
                         }
                     ],
+                    "general": {
+                        "last_ip_address": "89.160.20.156",
+                        "last_ip_address_geo": {
+                            "city_name": "Linköping",
+                            "continent_name": "Europe",
+                            "country_iso_code": "SE",
+                            "country_name": "Sweden",
+                            "location": {
+                                "lat": 58.4167,
+                                "lon": 15.6167
+                            },
+                            "region_iso_code": "SE-E",
+                            "region_name": "Östergötland County"
+                        },
+                        "report_date": "2024-06-19T15:54:37.692Z"
+                    },
                     "operating_system": {
                         "active_directory_status": "Not Bound",
                         "build": "23H311",
@@ -448,10 +656,10 @@
                     "udid": "21ED95A7-FF9D-52BD-A55B-36D54585083A"
                 }
             },
-            "os": {
-                "full": "sonoma",
-                "name": "macOS",
-                "version": "14.7.0"
+            "related": {
+                "ip": [
+                    "89.160.20.156"
+                ]
             }
         },
         {
@@ -460,6 +668,32 @@
             },
             "event": {
                 "kind": "asset"
+            },
+            "host": {
+                "address": [
+                    "89.160.20.156"
+                ],
+                "geo": {
+                    "city_name": "Linköping",
+                    "continent_name": "Europe",
+                    "country_iso_code": "SE",
+                    "country_name": "Sweden",
+                    "location": {
+                        "lat": 58.4167,
+                        "lon": 15.6167
+                    },
+                    "region_iso_code": "SE-E",
+                    "region_name": "Östergötland County"
+                },
+                "id": "21ED95A7-FF9D-52BD-A55B-36D54585083A",
+                "ip": [
+                    "89.160.20.156"
+                ],
+                "os": {
+                    "full": "sonoma",
+                    "name": "macOS",
+                    "version": "14.0.0"
+                }
             },
             "jamf_pro": {
                 "inventory": {
@@ -475,6 +709,22 @@
                             "version": "2.4"
                         }
                     ],
+                    "general": {
+                        "last_ip_address": "89.160.20.156",
+                        "last_ip_address_geo": {
+                            "city_name": "Linköping",
+                            "continent_name": "Europe",
+                            "country_iso_code": "SE",
+                            "country_name": "Sweden",
+                            "location": {
+                                "lat": 58.4167,
+                                "lon": 15.6167
+                            },
+                            "region_iso_code": "SE-E",
+                            "region_name": "Östergötland County"
+                        },
+                        "report_date": "2024-06-19T15:54:37.692Z"
+                    },
                     "operating_system": {
                         "active_directory_status": "Not Bound",
                         "build": "23H311",
@@ -487,10 +737,10 @@
                     "udid": "21ED95A7-FF9D-52BD-A55B-36D54585083A"
                 }
             },
-            "os": {
-                "full": "sonoma",
-                "name": "macOS",
-                "version": "14.0.0"
+            "related": {
+                "ip": [
+                    "89.160.20.156"
+                ]
             }
         }
     ]

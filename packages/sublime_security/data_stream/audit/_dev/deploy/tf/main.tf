@@ -7,6 +7,11 @@ provider "aws" {
       branch       = var.BRANCH
       build        = var.BUILD_ID
       created_date = var.CREATED_DATE
+
+      division = "engineering"
+      org      = "obs"
+      team     = "security-service-integrations" # owner.github in manifest.yml
+      project  = "integrations-sublime_security-package" # name in manifest.yml
     }
   }
 }
@@ -49,7 +54,7 @@ resource "aws_s3_object" "object" {
   key    = "test-audit.log"
   source = "./files/test-audit.log"
 
-  depends_on = [aws_sqs_queue.queue]
+  depends_on = [aws_s3_bucket_notification.bucket_notification]
 }
 
 output "queue_url" {

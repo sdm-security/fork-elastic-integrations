@@ -107,31 +107,31 @@ An example event for `asset_host_detection` looks as following:
 
 ```json
 {
-    "@timestamp": "2025-12-30T06:25:12.497Z",
+    "@timestamp": "2026-08-05T21:44:21.686Z",
     "agent": {
-        "ephemeral_id": "83655e80-2729-4332-8ace-457dd3a0bcef",
-        "id": "12042b44-811d-4c3e-b827-11cfb8074c86",
-        "name": "elastic-agent-48916",
+        "ephemeral_id": "b0db066d-696a-4c82-a2a9-9a7436e32f00",
+        "id": "960204fc-0824-4557-a45e-858a5f6c6c99",
+        "name": "elastic-agent-90390",
         "type": "filebeat",
-        "version": "8.19.0"
+        "version": "8.19.11"
     },
     "cloud": {
         "instance": {
-            "name": "adfssrvr"
+            "name": "noscore"
         }
     },
     "data_stream": {
         "dataset": "qualys_vmdr.asset_host_detection",
-        "namespace": "83470",
+        "namespace": "94127",
         "type": "logs"
     },
     "ecs": {
         "version": "8.11.0"
     },
     "elastic_agent": {
-        "id": "12042b44-811d-4c3e-b827-11cfb8074c86",
+        "id": "960204fc-0824-4557-a45e-858a5f6c6c99",
         "snapshot": false,
-        "version": "8.19.0"
+        "version": "8.19.11"
     },
     "event": {
         "agent_id_status": "verified",
@@ -139,22 +139,22 @@ An example event for `asset_host_detection` looks as following:
             "vulnerability"
         ],
         "dataset": "qualys_vmdr.asset_host_detection",
-        "id": "11111111",
-        "ingested": "2025-12-30T06:25:15Z",
+        "id": "99999991",
+        "ingested": "2026-08-05T21:44:24Z",
         "kind": "alert",
-        "original": "{\"DETECTION_LIST\":{\"AFFECT_RUNNING_KERNEL\":\"0\",\"CVE\":\"CVE-2023-48161,CVE-2024-21208,CVE-2024-21210,CVE-2024-21217,CVE-2024-21235\",\"FIRST_FOUND_DATETIME\":\"2021-02-05T04:50:45Z\",\"IS_DISABLED\":\"0\",\"IS_IGNORED\":\"0\",\"LAST_FIXED_DATETIME\":\"2022-12-14T06:52:57Z\",\"LAST_FOUND_DATETIME\":\"2024-03-08T20:15:41Z\",\"LAST_PROCESSED_DATETIME\":\"2024-03-08T20:15:41Z\",\"LAST_TEST_DATETIME\":\"2024-03-08T20:15:41Z\",\"LAST_UPDATE_DATETIME\":\"2024-03-08T20:15:41Z\",\"LATEST_VULNERABILITY_DETECTION_SOURCE\":\"Cloud Agent\",\"MITRE_TACTIC_ID\":\"TA0008, TA0004\",\"MITRE_TACTIC_NAME\":\"lateral-movement, privilege-escalation\",\"MITRE_TECHNIQUE_ID\":\"T1210, T1068\",\"MITRE_TECHNIQUE_NAME\":\"Exploitation of Remote Services, Exploitation for Privilege Escalation\",\"QDS\":{\"#text\":\"35\",\"severity\":\"LOW\"},\"QDS_FACTORS\":{\"QDS_FACTOR\":[{\"#text\":\"7.7\",\"name\":\"CVSS\"},{\"#text\":\"v3.x\",\"name\":\"CVSS_version\"},{\"#text\":\"0.00232\",\"name\":\"epss\"},{\"#text\":\"AV:N/AC:L/PR:L/UI:N/S:C/C:N/I:N/A:H\",\"name\":\"CVSS_vector\"}]},\"QID\":\"101\",\"RESULTS\":\"Package\\tInstalled Version\\tRequired Version\\nlinux-cloud-tools-4.4.0\\t1074-aws_4.4.0-1074.84\\t1092\\nlinux-aws-tools-4.4.0\\t1074_4.4.0-1074.84\\t1092\\nlinux-aws-headers-4.4.0\\t1074_4.15.0-1126.135\\t1092\\nlinux-tools-4.4.0\\t1074-aws_4.4.0-1074.84\\t1092\\nlinux-aws-cloud-tools-4.4.0\\t1074_4.4.0-1074.84\\t1092\",\"SEVERITY\":\"3\",\"SSL\":\"0\",\"STATUS\":\"Active\",\"TIMES_FOUND\":\"5393\",\"TRURISK_ELIMINATION_STATUS\":\"FIXED\",\"TYPE\":\"Confirmed\",\"UNIQUE_VULN_ID\":\"11111111\",\"VULNERABILITY_DETECTION_SOURCES\":\"Cloud Agent,Internal Scanner\"},\"DNS\":\"adfssrvr.adfs.local\",\"DNS_DATA\":{\"DOMAIN\":\"adfs.local\",\"FQDN\":\"adfssrvr.adfs.local\",\"HOSTNAME\":\"adfssrvr\"},\"ID\":\"1\",\"IP\":\"10.50.2.111\",\"KNOWLEDGE_BASE\":{\"CATEGORY\":\"CGI\",\"CONSEQUENCE\":\"Depending on the vulnerability being exploited, an unauthenticated remote attacker could conduct cross-site scripting, clickjacking or MIME-type sniffing attacks.\",\"CVE_LIST\":[\"CVE-2022-31629\",\"CVE-2022-31628\"],\"CVSS\":{\"BASE\":{\"#text\":\"7.7\",\"source\":\"service\"},\"TEMPORAL\":\"4.0\",\"VECTOR_STRING\":\"CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:N/I:N/A:H\"},\"DIAGNOSIS\":\"This QID reports the absence of the following\",\"DISCOVERY\":{\"REMOTE\":\"1\"},\"LAST_SERVICE_MODIFICATION_DATETIME\":\"2023-06-29T12:20:46Z\",\"PATCHABLE\":\"0\",\"PCI_FLAG\":\"1\",\"PUBLISHED_DATETIME\":\"2017-06-05T21:34:49Z\",\"QID\":\"101\",\"SEVERITY_LEVEL\":\"2\",\"SOFTWARE_LIST\":{\"SOFTWARE\":[{\"PRODUCT\":\"None\",\"VENDOR\":\"multi-vendor\"}]},\"SOLUTION\":\"\\u003cB\\u003eNote:\\u003c/B\\u003e To better debug the results of this QID\",\"THREAT_INTELLIGENCE\":{\"THREAT_INTEL\":[{\"id\":\"8\"}]},\"TITLE\":\"HTTP Security Header Not Detected\",\"VULN_TYPE\":\"Vulnerability\"},\"LAST_PC_SCANNED_DATE\":\"2023-06-28T09:58:12Z\",\"LAST_SCAN_DATETIME\":\"2023-07-03T06:25:17Z\",\"LAST_VM_SCANNED_DATE\":\"2023-07-03T06:23:47Z\",\"LAST_VM_SCANNED_DURATION\":\"1113\",\"NETBIOS\":\"ADFSSRVR\",\"OS\":\"Windows 2016/2019/10\",\"TRACKING_METHOD\":\"IP\",\"interval_id\":\"47a80f3f-ccfb-45ac-b90e-c0a618bb5bb8\",\"interval_start\":\"2025-12-30T06:25:12.491602751Z\"}",
+        "original": "{\"DETECTION_LIST\":{\"AFFECT_RUNNING_KERNEL\":\"0\",\"FIRST_FOUND_DATETIME\":\"2021-02-05T04:50:45Z\",\"IS_DISABLED\":\"0\",\"IS_IGNORED\":\"0\",\"LAST_FOUND_DATETIME\":\"2024-03-08T20:15:41Z\",\"LAST_PROCESSED_DATETIME\":\"2024-03-08T20:15:41Z\",\"LAST_TEST_DATETIME\":\"2024-03-08T20:15:41Z\",\"LAST_UPDATE_DATETIME\":\"2024-03-08T20:15:41Z\",\"QID\":\"102\",\"SEVERITY\":\"5\",\"SSL\":\"0\",\"STATUS\":\"Active\",\"TIMES_FOUND\":\"5393\",\"TYPE\":\"Confirmed\",\"UNIQUE_VULN_ID\":\"99999991\"},\"DNS\":\"noscore.adfs.local\",\"DNS_DATA\":{\"DOMAIN\":\"adfs.local\",\"FQDN\":\"noscore.adfs.local\",\"HOSTNAME\":\"noscore\"},\"ID\":\"9\",\"IP\":\"10.50.2.119\",\"KNOWLEDGE_BASE\":{\"CATEGORY\":\"Security Policy\",\"CODE_MODIFIED_DATETIME\":\"2024-07-29T12:47:11Z\",\"CONSEQUENCE\":\"Apache no longer provides security updates for 1.x versions. Obsolete software is more vulnerable to viruses and other attacks.\\u003cP\\u003e\",\"CVE_LIST\":[\"CVE-2019-14835\"],\"CVSS\":{\"BASE\":{\"#text\":\"10.0\",\"source\":\"service\"},\"TEMPORAL\":\"8.5\",\"VECTOR_STRING\":\"CVSS:2.0/AV:N/AC:L/Au:N/C:C/I:C/A:C/E:U/RL:U/RC:C\"},\"CVSS_V3\":{\"BASE\":\"10.0\",\"CVSS3_VERSION\":\"3.1\",\"TEMPORAL\":\"9.1\",\"VECTOR_STRING\":\"CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H/E:U/RL:U/RC:C\"},\"DIAGNOSIS\":\"On August 5, 2015, the Apache Logging Services Project Management Committee (PMC) has announced that the Log4j 1.x logging framework has reached its end of life (EOL) and is no longer officially supported.\\u003cBR\\u003e\\n\\n    \\u003cP\\u003eQID Detection: (Authenticated) - Linux\\u003cBR\\u003e\\n    This QID uses the OS package manager, locate command and ls proc command to check vulnerable versions of log4j\\u003cP\\u003e\\n\\n    \\u003cP\\u003eQID Detection: (Authenticated) - MacOS\\u003cBR\\u003e\\n    This QID uses the locate command and mdfind command to check vulnerable versions of log4j\\u003cBR\\u003e\\n\\n    QID Detection: (Authenticated) - Windows\\u003cBR\\u003e\\n    On Windows system, the QID identifies vulnerable instance of log4j via WMI query to check log4j included in the running processes via command-line.\\n    \\u003cP\\u003e\",\"DISCOVERY\":{\"AUTH_TYPE_LIST\":{\"AUTH_TYPE\":[\"Unix\",\"Windows\"]},\"REMOTE\":\"0\"},\"LAST_SERVICE_MODIFICATION_DATETIME\":\"2024-07-29T12:47:11Z\",\"PATCHABLE\":\"0\",\"PCI_FLAG\":\"1\",\"PUBLISHED_DATETIME\":\"2022-01-12T13:25:56Z\",\"QID\":\"102\",\"SEVERITY_LEVEL\":\"5\",\"SOFTWARE_LIST\":{\"SOFTWARE\":[{\"PRODUCT\":\"log4j\",\"VENDOR\":\"apache\"}]},\"SOLUTION\":\"Customers are advised to upgrade to Apache Log4j 2.X, for more information please refer to \\u003cA HREF=\\\"https://blogs.apache.org/foundation/entry/apache_logging_services_project_announces\\\" TARGET=\\\"_blank\\\"\\u003e Apache Blog\\u003c/A\\u003e.\\u003cBR\\u003e\",\"THREAT_INTELLIGENCE\":{\"THREAT_INTEL\":[{\"#text\":\"High_Lateral_Movement\",\"id\":\"4\"},{\"#text\":\"Easy_Exploit\",\"id\":\"5\"},{\"#text\":\"High_Data_Loss\",\"id\":\"6\"},{\"#text\":\"Denial_of_Service\",\"id\":\"7\"},{\"#text\":\"No_Patch\",\"id\":\"8\"},{\"#text\":\"Privilege_Escalation\",\"id\":\"13\"},{\"#text\":\"Remote_Code_Execution\",\"id\":\"15\"}]},\"TITLE\":\"EOL/Obsolete Software: Apache Log4j 1.X Detected\",\"VENDOR_REFERENCE_LIST\":{\"VENDOR_REFERENCE\":[{\"ID\":\"Apache Log4j Security Advisory\",\"URL\":\"https://blogs.apache.org/foundation/entry/apache_logging_services_project_announces\"}]},\"VULN_TYPE\":\"Vulnerability\"},\"LAST_PC_SCANNED_DATE\":\"2023-06-28T09:58:12Z\",\"LAST_SCAN_DATETIME\":\"2023-07-03T06:25:17Z\",\"LAST_VM_SCANNED_DATE\":\"2023-07-03T06:23:47Z\",\"LAST_VM_SCANNED_DURATION\":\"1113\",\"NETBIOS\":\"NOSCORE\",\"OS\":\"Windows 2016/2019/10\",\"TRACKING_METHOD\":\"IP\"}",
         "type": [
             "info"
         ]
     },
     "host": {
-        "domain": "ADFSSRVR",
-        "hostname": "adfssrvr",
-        "id": "1",
+        "domain": "NOSCORE",
+        "hostname": "noscore",
+        "id": "9",
         "ip": [
-            "10.50.2.111"
+            "10.50.2.119"
         ],
-        "name": "adfssrvr.adfs.local",
+        "name": "noscore.adfs.local",
         "os": {
             "full": "Windows 2016/2019/10",
             "platform": "windows",
@@ -167,211 +167,151 @@ An example event for `asset_host_detection` looks as following:
     "observer": {
         "vendor": "Qualys VMDR"
     },
-    "package": {
-        "fixed_version": [
-            "1092",
-            "1092",
-            "1092",
-            "1092",
-            "1092"
-        ],
-        "name": [
-            "linux-cloud-tools-4.4.0",
-            "linux-aws-tools-4.4.0",
-            "linux-aws-headers-4.4.0",
-            "linux-tools-4.4.0",
-            "linux-aws-cloud-tools-4.4.0"
-        ],
-        "version": [
-            "1074-aws_4.4.0-1074.84",
-            "1074_4.4.0-1074.84",
-            "1074_4.15.0-1126.135",
-            "1074-aws_4.4.0-1074.84",
-            "1074_4.4.0-1074.84"
-        ]
-    },
     "qualys_vmdr": {
         "asset_host_detection": {
-            "dns": "adfssrvr.adfs.local",
+            "dns": "noscore.adfs.local",
             "dns_data": {
                 "domain": "adfs.local",
-                "fqdn": "adfssrvr.adfs.local",
-                "hostname": "adfssrvr"
+                "fqdn": "noscore.adfs.local",
+                "hostname": "noscore"
             },
-            "id": "1",
-            "interval_id": "47a80f3f-ccfb-45ac-b90e-c0a618bb5bb8",
-            "interval_start": "2025-12-30T06:25:12.491Z",
-            "ip": "10.50.2.111",
+            "id": "9",
+            "interval_id": "2069808d-baa0-4408-8333-f15c65f6390a",
+            "interval_start": "2026-08-05T21:44:21.683Z",
+            "ip": "10.50.2.119",
             "knowledge_base": {
-                "category": "CGI",
+                "category": "Security Policy",
                 "consequence": {
-                    "value": "Depending on the vulnerability being exploited, an unauthenticated remote attacker could conduct cross-site scripting, clickjacking or MIME-type sniffing attacks."
+                    "value": "Apache no longer provides security updates for 1.x versions. Obsolete software is more vulnerable to viruses and other attacks.<P>"
                 },
                 "cve_list": [
-                    "CVE-2022-31629",
-                    "CVE-2022-31628"
+                    "CVE-2019-14835"
                 ],
                 "cvss": {
                     "base_obj": {
-                        "#text": "7.7",
+                        "#text": "10.0",
                         "source": "service"
                     },
-                    "temporal": "4.0",
-                    "vector_string": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:N/I:N/A:H"
+                    "temporal": "8.5",
+                    "vector_string": "CVSS:2.0/AV:N/AC:L/Au:N/C:C/I:C/A:C/E:U/RL:U/RC:C"
+                },
+                "cvss_v3": {
+                    "base": "10.0",
+                    "temporal": "9.1",
+                    "vector_string": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H/E:U/RL:U/RC:C",
+                    "version": "3.1"
                 },
                 "diagnosis": {
-                    "value": "This QID reports the absence of the following"
+                    "value": "On August 5, 2015, the Apache Logging Services Project Management Committee (PMC) has announced that the Log4j 1.x logging framework has reached its end of life (EOL) and is no longer officially supported.<BR>\n\n    <P>QID Detection: (Authenticated) - Linux<BR>\n    This QID uses the OS package manager, locate command and ls proc command to check vulnerable versions of log4j<P>\n\n    <P>QID Detection: (Authenticated) - MacOS<BR>\n    This QID uses the locate command and mdfind command to check vulnerable versions of log4j<BR>\n\n    QID Detection: (Authenticated) - Windows<BR>\n    On Windows system, the QID identifies vulnerable instance of log4j via WMI query to check log4j included in the running processes via command-line.\n    <P>"
                 },
                 "discovery": {
-                    "remote": 1
+                    "auth_type_list": {
+                        "value": [
+                            "Unix",
+                            "Windows"
+                        ]
+                    },
+                    "remote": 0
                 },
                 "last": {
-                    "service_modification_datetime": "2023-06-29T12:20:46.000Z"
+                    "service_modification_datetime": "2024-07-29T12:47:11.000Z"
                 },
                 "patchable": false,
                 "pci_flag": true,
-                "published_datetime": "2017-06-05T21:34:49.000Z",
-                "qid": "101",
-                "severity_level": "Medium",
+                "published_datetime": "2022-01-12T13:25:56.000Z",
+                "qid": "102",
+                "severity_level": "Urgent",
                 "software_list": [
                     {
-                        "product": "None",
-                        "vendor": "multi-vendor"
+                        "product": "log4j",
+                        "vendor": "apache"
                     }
                 ],
                 "solution": {
-                    "value": "<B>Note:</B> To better debug the results of this QID"
+                    "value": "Customers are advised to upgrade to Apache Log4j 2.X, for more information please refer to <A HREF=\"https://blogs.apache.org/foundation/entry/apache_logging_services_project_announces\" TARGET=\"_blank\"> Apache Blog</A>.<BR>"
                 },
+                "status": "found",
                 "threat_intelligence": {
                     "intel": [
                         {
-                            "id": "8"
+                            "id": "4",
+                            "text": "High_Lateral_Movement"
+                        },
+                        {
+                            "id": "5",
+                            "text": "Easy_Exploit"
+                        },
+                        {
+                            "id": "6",
+                            "text": "High_Data_Loss"
+                        },
+                        {
+                            "id": "7",
+                            "text": "Denial_of_Service"
+                        },
+                        {
+                            "id": "8",
+                            "text": "No_Patch"
+                        },
+                        {
+                            "id": "13",
+                            "text": "Privilege_Escalation"
+                        },
+                        {
+                            "id": "15",
+                            "text": "Remote_Code_Execution"
                         }
                     ]
                 },
-                "title": "HTTP Security Header Not Detected",
+                "title": "EOL/Obsolete Software: Apache Log4j 1.X Detected",
+                "vendor_reference_list": [
+                    {
+                        "id": "Apache Log4j Security Advisory",
+                        "url": "https://blogs.apache.org/foundation/entry/apache_logging_services_project_announces"
+                    }
+                ],
                 "vuln_type": "Vulnerability"
             },
             "last_pc_scanned_date": "2023-06-28T09:58:12.000Z",
             "last_scan_datetime": "2023-07-03T06:25:17.000Z",
             "last_vm_scanned_date": "2023-07-03T06:23:47.000Z",
             "last_vm_scanned_duration": 1113,
-            "netbios": "ADFSSRVR",
+            "netbios": "NOSCORE",
             "os": "Windows 2016/2019/10",
-            "package_nested": [
-                {
-                    "fixed_version": "1092",
-                    "name": "linux-cloud-tools-4.4.0",
-                    "version": "1074-aws_4.4.0-1074.84"
-                },
-                {
-                    "fixed_version": "1092",
-                    "name": "linux-aws-tools-4.4.0",
-                    "version": "1074_4.4.0-1074.84"
-                },
-                {
-                    "fixed_version": "1092",
-                    "name": "linux-aws-headers-4.4.0",
-                    "version": "1074_4.15.0-1126.135"
-                },
-                {
-                    "fixed_version": "1092",
-                    "name": "linux-tools-4.4.0",
-                    "version": "1074-aws_4.4.0-1074.84"
-                },
-                {
-                    "fixed_version": "1092",
-                    "name": "linux-aws-cloud-tools-4.4.0",
-                    "version": "1074_4.4.0-1074.84"
-                }
-            ],
             "tracking_method": "IP",
             "vulnerability": {
                 "affect_running_kernel": "0",
-                "cve": [
-                    "CVE-2023-48161",
-                    "CVE-2024-21208",
-                    "CVE-2024-21210",
-                    "CVE-2024-21217",
-                    "CVE-2024-21235"
-                ],
                 "first_found_datetime": "2021-02-05T04:50:45.000Z",
                 "is_disabled": false,
                 "is_ignored": false,
-                "last_fixed_datetime": "2022-12-14T06:52:57.000Z",
                 "last_found_datetime": "2024-03-08T20:15:41.000Z",
                 "last_processed_datetime": "2024-03-08T20:15:41.000Z",
                 "last_test_datetime": "2024-03-08T20:15:41.000Z",
                 "last_update_datetime": "2024-03-08T20:15:41.000Z",
-                "latest_vulnerability_detection_source": "Cloud Agent",
-                "mitre_tactic_id": [
-                    "TA0008",
-                    "TA0004"
-                ],
-                "mitre_tactic_name": [
-                    "lateral-movement",
-                    "privilege-escalation"
-                ],
-                "mitre_technique_id": [
-                    "T1210",
-                    "T1068"
-                ],
-                "mitre_technique_name": [
-                    "Exploitation of Remote Services",
-                    "Exploitation for Privilege Escalation"
-                ],
-                "qds": {
-                    "score": 35,
-                    "severity": "LOW"
-                },
-                "qds_factors": [
-                    {
-                        "name": "CVSS",
-                        "text": "7.7"
-                    },
-                    {
-                        "name": "CVSS_version",
-                        "text": "v3.x"
-                    },
-                    {
-                        "name": "epss",
-                        "text": "0.00232"
-                    },
-                    {
-                        "name": "CVSS_vector",
-                        "text": "AV:N/AC:L/PR:L/UI:N/S:C/C:N/I:N/A:H"
-                    }
-                ],
-                "qid": 101,
-                "results": "Package||Installed Version||Required Version;;linux-cloud-tools-4.4.0||1074-aws_4.4.0-1074.84||1092;;linux-aws-tools-4.4.0||1074_4.4.0-1074.84||1092;;linux-aws-headers-4.4.0||1074_4.15.0-1126.135||1092;;linux-tools-4.4.0||1074-aws_4.4.0-1074.84||1092;;linux-aws-cloud-tools-4.4.0||1074_4.4.0-1074.84||1092",
-                "severity": 3,
+                "qid": 102,
+                "severity": 5,
                 "ssl": "0",
                 "status": "Active",
                 "times_found": 5393,
-                "trurisk_elimination_status": "FIXED",
                 "type": "Confirmed",
-                "unique_vuln_id": "11111111",
-                "vulnerability_detection_sources": [
-                    "Cloud Agent",
-                    "Internal Scanner"
-                ]
+                "unique_vuln_id": "99999991"
             }
         }
     },
     "related": {
         "hosts": [
-            "adfssrvr",
-            "adfssrvr.adfs.local",
-            "1",
-            "ADFSSRVR"
+            "noscore",
+            "noscore.adfs.local",
+            "9",
+            "NOSCORE"
         ],
         "ip": [
-            "10.50.2.111"
+            "10.50.2.119"
         ]
     },
     "resource": {
-        "id": "1",
-        "name": "adfssrvr.adfs.local"
+        "id": "9",
+        "name": "noscore.adfs.local"
     },
     "tags": [
         "preserve_original_event",
@@ -382,51 +322,26 @@ An example event for `asset_host_detection` looks as following:
     ],
     "vulnerability": {
         "category": [
-            "CGI"
+            "Security Policy"
         ],
         "classification": "CVSS",
-        "description": "This QID reports the absence of the following",
+        "description": "On August 5, 2015, the Apache Logging Services Project Management Committee (PMC) has announced that the Log4j 1.x logging framework has reached its end of life (EOL) and is no longer officially supported.<BR>\n\n    <P>QID Detection: (Authenticated) - Linux<BR>\n    This QID uses the OS package manager, locate command and ls proc command to check vulnerable versions of log4j<P>\n\n    <P>QID Detection: (Authenticated) - MacOS<BR>\n    This QID uses the locate command and mdfind command to check vulnerable versions of log4j<BR>\n\n    QID Detection: (Authenticated) - Windows<BR>\n    On Windows system, the QID identifies vulnerable instance of log4j via WMI query to check log4j included in the running processes via command-line.\n    <P>",
         "enumeration": "CVE",
         "id": [
-            "CVE-2022-31629",
-            "CVE-2022-31628"
+            "CVE-2019-14835"
         ],
-        "package": {
-            "fixed_version": [
-                "1092",
-                "1092",
-                "1092",
-                "1092",
-                "1092"
-            ],
-            "name": [
-                "linux-cloud-tools-4.4.0",
-                "linux-aws-tools-4.4.0",
-                "linux-aws-headers-4.4.0",
-                "linux-tools-4.4.0",
-                "linux-aws-cloud-tools-4.4.0"
-            ],
-            "version": [
-                "1074-aws_4.4.0-1074.84",
-                "1074_4.4.0-1074.84",
-                "1074_4.15.0-1126.135",
-                "1074-aws_4.4.0-1074.84",
-                "1074_4.4.0-1074.84"
-            ]
-        },
         "reference": [
-            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-31629",
-            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-31628"
+            "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-14835"
         ],
         "scanner": {
             "vendor": "Qualys"
         },
         "score": {
-            "base": 7.7,
+            "base": 10,
             "version": "3.1"
         },
-        "severity": "High",
-        "title": "HTTP Security Header Not Detected"
+        "severity": "Critical",
+        "title": "EOL/Obsolete Software: Apache Log4j 1.X Detected"
     }
 }
 ```
@@ -537,6 +452,7 @@ An example event for `asset_host_detection` looks as following:
 | qualys_vmdr.asset_host_detection.knowledge_base.software_list.vendor |  | keyword |
 | qualys_vmdr.asset_host_detection.knowledge_base.solution.comment |  | match_only_text |
 | qualys_vmdr.asset_host_detection.knowledge_base.solution.value |  | match_only_text |
+| qualys_vmdr.asset_host_detection.knowledge_base.status | Indicates whether the QID was found in the Knowledge Base (`found`) or not (`not_found`). | keyword |
 | qualys_vmdr.asset_host_detection.knowledge_base.supported_modules |  | keyword |
 | qualys_vmdr.asset_host_detection.knowledge_base.threat_intelligence.intel.id |  | keyword |
 | qualys_vmdr.asset_host_detection.knowledge_base.threat_intelligence.intel.text |  | keyword |
@@ -649,24 +565,24 @@ An example event for `knowledge_base` looks as following:
 {
     "@timestamp": "2023-06-29T12:20:46.000Z",
     "agent": {
-        "ephemeral_id": "98b85997-99e2-41ee-bb02-6532fae2b357",
-        "id": "706ea693-7cbe-44f8-902f-ee169e228005",
-        "name": "elastic-agent-80703",
+        "ephemeral_id": "da0816f0-0acb-432d-aabc-40ff74ab0b83",
+        "id": "af521d3d-fb8f-4a9e-b30a-9c41a680f7d2",
+        "name": "elastic-agent-33894",
         "type": "filebeat",
-        "version": "8.19.0"
+        "version": "8.19.11"
     },
     "data_stream": {
         "dataset": "qualys_vmdr.knowledge_base",
-        "namespace": "60071",
+        "namespace": "64767",
         "type": "logs"
     },
     "ecs": {
         "version": "8.11.0"
     },
     "elastic_agent": {
-        "id": "706ea693-7cbe-44f8-902f-ee169e228005",
+        "id": "af521d3d-fb8f-4a9e-b30a-9c41a680f7d2",
         "snapshot": false,
-        "version": "8.19.0"
+        "version": "8.19.11"
     },
     "event": {
         "agent_id_status": "verified",
@@ -674,10 +590,10 @@ An example event for `knowledge_base` looks as following:
             "vulnerability"
         ],
         "dataset": "qualys_vmdr.knowledge_base",
-        "id": "2",
-        "ingested": "2025-12-29T10:51:56Z",
+        "id": "11830",
+        "ingested": "2026-02-25T04:32:39Z",
         "kind": "alert",
-        "original": "{\"BUGTRAQ_LIST\":{\"BUGTRAQ\":[{\"ID\":\"9821\",\"URL\":\"https://url.com/bid/9821\"}]},\"CATEGORY\":\"CGI\",\"CONSEQUENCE\":\"Depending on the vulnerability being exploited, an unauthenticated remote attacker could conduct cross-site scripting, clickjacking or MIME-type sniffing attacks.\",\"CVE_LIST\":[\"CVE-2022-31629\",\"CVE-2022-31628\"],\"DIAGNOSIS\":\"This QID reports the absence of the following\",\"DISCOVERY\":{\"REMOTE\":\"1\"},\"LAST_SERVICE_MODIFICATION_DATETIME\":\"2023-06-29T12:20:46Z\",\"PATCHABLE\":\"0\",\"PCI_FLAG\":\"1\",\"PUBLISHED_DATETIME\":\"2017-06-05T21:34:49Z\",\"QID\":\"2\",\"SEVERITY_LEVEL\":\"2\",\"SOFTWARE_LIST\":{\"SOFTWARE\":[{\"PRODUCT\":\"fusion\",\"VENDOR\":\"vmware\"}]},\"SOLUTION\":\"\\u003cB\\u003eNote:\\u003c/B\\u003e To better debug the results of this QID\",\"THREAT_INTELLIGENCE\":{\"THREAT_INTEL\":[{\"#text\":\"No_Patch\",\"id\":\"8\"}]},\"TITLE\":\"HTTP Security Header Not Detected\",\"VENDOR_REFERENCE_LIST\":{\"VENDOR_REFERENCE\":[{\"ID\":\"VMSA-2024-0010\",\"URL\":\"https://support.broadcom.com/web/ecx/support-content-notification/-/external/content/SecurityAdvisories/0/24280\"}]},\"VULN_TYPE\":\"Vulnerability\"}",
+        "original": "{\"CATEGORY\":\"CGI\",\"CONSEQUENCE\":\"\",\"CVE_LIST\":[\"CVE-2022-31629\",\"CVE-2022-31628\"],\"DIAGNOSIS\":\"\",\"DISCOVERY\":{\"REMOTE\":\"1\"},\"LAST_SERVICE_MODIFICATION_DATETIME\":\"2023-06-29T12:20:46Z\",\"PATCHABLE\":\"0\",\"PCI_FLAG\":\"1\",\"PUBLISHED_DATETIME\":\"2017-06-05T21:34:49Z\",\"QID\":\"11830\",\"SEVERITY_LEVEL\":\"2\",\"SOFTWARE_LIST\":{\"SOFTWARE\":[{\"PRODUCT\":\"\",\"VENDOR\":\"\"}]},\"SOLUTION\":\"\",\"THREAT_INTELLIGENCE\":{\"THREAT_INTEL\":[{\"id\":\"8\"}]},\"TITLE\":\"\",\"VULN_TYPE\":\"Vulnerability\"}",
         "type": [
             "info"
         ]
@@ -687,23 +603,11 @@ An example event for `knowledge_base` looks as following:
     },
     "qualys_vmdr": {
         "knowledge_base": {
-            "bugtraq_list": [
-                {
-                    "id": "9821",
-                    "url": "https://url.com/bid/9821"
-                }
-            ],
             "category": "CGI",
-            "consequence": {
-                "value": "Depending on the vulnerability being exploited, an unauthenticated remote attacker could conduct cross-site scripting, clickjacking or MIME-type sniffing attacks."
-            },
             "cve_list": [
                 "CVE-2022-31629",
                 "CVE-2022-31628"
             ],
-            "diagnosis": {
-                "value": "This QID reports the absence of the following"
-            },
             "discovery": {
                 "remote": 1
             },
@@ -713,32 +617,15 @@ An example event for `knowledge_base` looks as following:
             "patchable": false,
             "pci_flag": true,
             "published_datetime": "2017-06-05T21:34:49.000Z",
-            "qid": "2",
+            "qid": "11830",
             "severity_level": "2",
-            "software_list": [
-                {
-                    "product": "fusion",
-                    "vendor": "vmware"
-                }
-            ],
-            "solution": {
-                "value": "<B>Note:</B> To better debug the results of this QID"
-            },
             "threat_intelligence": {
                 "intel": [
                     {
-                        "id": "8",
-                        "text": "No_Patch"
+                        "id": "8"
                     }
                 ]
             },
-            "title": "HTTP Security Header Not Detected",
-            "vendor_reference_list": [
-                {
-                    "id": "VMSA-2024-0010",
-                    "url": "https://support.broadcom.com/web/ecx/support-content-notification/-/external/content/SecurityAdvisories/0/24280"
-                }
-            ],
             "vuln_type": "Vulnerability"
         }
     },
@@ -871,24 +758,24 @@ An example event for `user_activity` looks as following:
 {
     "@timestamp": "2024-01-18T12:45:24.000Z",
     "agent": {
-        "ephemeral_id": "8541dd66-de0a-4e54-a66e-3f9dc02867df",
-        "id": "3acf31e6-1468-482c-b38b-d3b7397270dd",
-        "name": "elastic-agent-32349",
+        "ephemeral_id": "e216870f-7101-4fad-9724-9b71ed9ad95c",
+        "id": "15eb4582-ca67-48f0-9af3-72657ed5967e",
+        "name": "elastic-agent-45371",
         "type": "filebeat",
-        "version": "8.13.0"
+        "version": "8.19.11"
     },
     "data_stream": {
         "dataset": "qualys_vmdr.user_activity",
-        "namespace": "28709",
+        "namespace": "32843",
         "type": "logs"
     },
     "ecs": {
         "version": "8.11.0"
     },
     "elastic_agent": {
-        "id": "3acf31e6-1468-482c-b38b-d3b7397270dd",
+        "id": "15eb4582-ca67-48f0-9af3-72657ed5967e",
         "snapshot": false,
-        "version": "8.13.0"
+        "version": "8.19.11"
     },
     "event": {
         "action": "request",
@@ -897,7 +784,7 @@ An example event for `user_activity` looks as following:
             "api"
         ],
         "dataset": "qualys_vmdr.user_activity",
-        "ingested": "2024-09-25T21:52:05Z",
+        "ingested": "2026-02-25T04:33:31Z",
         "kind": "event",
         "original": "{\"Action\":\"request\",\"Date\":\"2024-01-18T12:45:24Z\",\"Details\":\"API: /api/2.0/fo/activity_log/index.php\",\"Module\":\"auth\",\"User IP\":\"10.113.195.136\",\"User Name\":\"john\",\"User Role\":\"Reader\"}",
         "provider": "auth",

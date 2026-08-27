@@ -7,6 +7,11 @@ provider "aws" {
       aws_branch       = var.BRANCH
       aws_build        = var.BUILD_ID
       aws_created_date = var.CREATED_DATE
+
+      division = "engineering"
+      org      = "obs"
+      team     = "security-service-integrations" # owner.github in manifest.yml
+      project  = "integrations-netskope-package" # name in manifest.yml
     }
   }
 }
@@ -35,7 +40,7 @@ resource "aws_sqs_queue" "aws_queue" {
 POLICY
 }
 
-resource "aws_s3_bucket_notification" "aws_bucket_notification" {
+resource "aws_s3_bucket_notification" "bucket_notification" {
   bucket = aws_s3_bucket.aws_bucket.id
 
   queue {
@@ -51,7 +56,7 @@ resource "aws_s3_object" "aws_object" {
   content_encoding = "gzip"
   content_type     = "text/csv"
 
-  depends_on = [aws_sqs_queue.aws_queue]
+  depends_on = [aws_s3_bucket_notification.bucket_notification]
 }
 
 output "aws_queue_url" {

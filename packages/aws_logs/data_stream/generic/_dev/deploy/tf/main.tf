@@ -10,6 +10,11 @@ provider "aws" {
       branch       = var.BRANCH
       build        = var.BUILD_ID
       created_date = var.CREATED_DATE
+
+      division = "engineering"
+      org      = "obs"
+      team     = "obs-ds-hosted-services" # owner.github in packages/aws_logs/manifest.yml
+      project  = "integrations-aws_logs-package" # name in packages/aws_logs/manifest.yml
     }
   }
 }
@@ -56,7 +61,7 @@ resource "aws_s3_object" "object" {
   # For Terraform 0.11.11 and earlier, use the md5() function and the file() function:
   # etag = "${md5(file("path/to/file"))}"
   etag       = filemd5("./files/test.log")
-  depends_on = [aws_sqs_queue.aws_logs_queue]
+  depends_on = [aws_s3_bucket_notification.aws_logs_notification]
 }
 
 output "queue_url" {

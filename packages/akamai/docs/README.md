@@ -2,6 +2,8 @@
 
 The Akamai integration collects events from the Akamai API, specifically reading from the [Akamai SIEM API](https://techdocs.akamai.com/siem-integration/reference/api).
 
+> **Breaking change in 4.0.0**: The backend used to collect Akamai SIEM logs from the API has changed. This version requires Elastic Stack 9.5.0 or later. After upgrading, existing agent policies that collect Akamai SIEM logs via the API must be reconfigured for data collection to resume. If you previously set the advanced **SSL Configuration** option, it must be rewritten using the OpenTelemetry `tls` schema (`ca_file`/`ca_pem`, `cert_file`/`cert_pem`, `key_file`/`key_pem`, `insecure_skip_verify`, `min_version`, `max_version`) rather than the Beats keys (`certificate_authorities`, `verification_mode`, `supported_protocols`). The Akamai SIEM API only provides access to the previous 12 hours of events, so reconfigure the policy within 12 hours of upgrading to avoid a permanent gap in the data; the **Initial Interval** option (default and maximum `12h`) controls how far back the first fetch reaches. Collection from Google Cloud Storage is unaffected.
+
 ## Logs
 
 ### SIEM
@@ -12,7 +14,17 @@ Use this API to get security event data generated on the Akamai platform and cor
 
 See [Akamai API get started](https://techdocs.akamai.com/siem-integration/reference/api-get-started) to set up your Akamai account and get your credentials.
 
-### To collect data from GCS Bucket, follow the below steps:
+### To collect data via API, follow the steps below:
+- Enable the "Collect Akamai SIEM logs via API" toggle; it is disabled by default.
+- Configure the API Host, Zone IDs and the EdgeGrid credentials (Client Token, Client Secret, Access Token) under the "Collect Akamai SIEM logs via API" section.
+- If the integration policy uses a namespace other than `default`, set the "Data Stream Namespace" option to the same value.
+
+API collection uses the native OpenTelemetry `akamai_siem` receiver behind the scenes. This is an internal backend detail and does not change the data you collect.
+
+**Note**:
+- Cursor persistence is enabled by default, so collection resumes from where it left off after an Elastic Agent restart. It can be turned off via the "Persist Cursor" advanced option. Cursor persistence is also not guaranteed across stack upgrades and breaking changes. Whenever the cursor is unavailable, the integration re-fetches the configured Initial Interval window; replayed events are deduplicated by the ingest pipeline's `event.original` fingerprint as long as the data stream is still writing to the same backing index.
+
+### To collect data from GCS Bucket, follow the steps below:
 - Configure the [Data Forwarder](https://techdocs.akamai.com/datastream2/docs/stream-google-cloud/) to ingest data into a GCS bucket.
 - Configure the GCS bucket names and credentials along with the required configs under the "Collect Akamai SIEM logs via Google Cloud Storage" section. 
 - Make sure the service account and authentication being used, has proper levels of access to the GCS bucket [Manage Service Account Keys](https://cloud.google.com/iam/docs/creating-managing-service-account-keys/)
@@ -35,6 +47,9 @@ See [Akamai API get started](https://techdocs.akamai.com/siem-integration/refere
 | akamai.siem.client_data.telemetry_type | Specifies the telemetry type in use. | long |
 | akamai.siem.client_reputation | Client IP scores for Client Reputation. | keyword |
 | akamai.siem.config_id | ID of the Security Configuration applied to the request. | keyword |
+| akamai.siem.identity.ja4 | A JA4 TLS client fingerprint value. | keyword |
+| akamai.siem.identity.tls_fingerprint_v2 | A client TLS fingerprint V2 value. | keyword |
+| akamai.siem.identity.tls_fingerprint_v3 | A client TLS fingerprint V3 value. | keyword |
 | akamai.siem.policy_id | ID of the Firewall policy applied to the request. | keyword |
 | akamai.siem.request.headers | HTTP Request headers | flattened |
 | akamai.siem.response.headers | HTTP response headers | flattened |
@@ -77,11 +92,11 @@ An example event for `siem` looks as following:
 
 ```json
 {
-    "@timestamp": "2025-12-09T22:28:27.000Z",
+    "@timestamp": "2016-08-11T13:45:33.026Z",
     "agent": {
-        "ephemeral_id": "782a8cff-220e-4ab6-9349-2208799e9a24",
-        "id": "efbc3410-6820-4850-87d0-bbb212062a6d",
-        "name": "elastic-agent-59351",
+        "ephemeral_id": "ca186677-5301-4e63-8aa5-1ded49198d1f",
+        "id": "9d70aadf-eebc-4a79-9154-d09492f8ce88",
+        "name": "elastic-agent-72124",
         "type": "filebeat",
         "version": "8.18.0"
     },
@@ -97,8 +112,8 @@ An example event for `siem` looks as following:
                 "sdk_version": "4.7.1",
                 "telemetry_type": 2
             },
-            "config_id": "14227",
-            "policy_id": "qik1_26545",
+            "config_id": "6724",
+            "policy_id": "scoe_5426",
             "request": {
                 "headers": {
                     "Accept": "text/html,application/xhtml xml",
@@ -107,7 +122,6 @@ An example event for `siem` looks as following:
             },
             "response": {
                 "headers": {
-                    "Content-Length": "150",
                     "Content-Type": "text/html",
                     "Mime-Version": "1.0",
                     "Server": "AkamaiGHost"
@@ -118,34 +132,25 @@ An example event for `siem` looks as following:
                 "deny"
             ],
             "rule_tags": [
-                "owasp_crs/web_attack/file_injection",
-                "owasp_crs/web_attack/command_inject"
+                "web_attack/xss",
+                "automation/misc"
             ],
             "rules": [
                 {
-                    "ruleActions": "alert",
-                    "ruleData": "telnet.exe",
-                    "ruleMessages": "System Command Access",
-                    "ruleSelectors": "ARGS:option",
-                    "ruleTags": "OWASP_CRS/WEB_ATTACK/FILE_INJECTION",
-                    "ruleVersions": "4",
-                    "rules": "950002"
+                    "ruleActions": "ALERT",
+                    "ruleData": "alert(",
+                    "ruleMessages": "Cross-site Scripting (XSS) Attack",
+                    "ruleSelectors": "ARGS:a",
+                    "ruleTags": "WEB_ATTACK/XSS",
+                    "rules": "950004"
                 },
                 {
-                    "ruleActions": "alert",
-                    "ruleData": "telnet.exe",
-                    "ruleMessages": "System Command Injection",
-                    "ruleSelectors": "ARGS:option",
-                    "ruleTags": "OWASP_CRS/WEB_ATTACK/COMMAND_INJECT",
-                    "ruleVersions": "4",
-                    "rules": "950006"
-                },
-                {
-                    "ruleActions": "deny",
-                    "ruleData": "Vector Score: 10, DENY threshold: 9, Ale",
-                    "ruleMessages": "Anomaly Score Exceeded fo",
-                    "ruleVersions": "1",
-                    "rules": "CMD-INJECTION-ANOMALY"
+                    "ruleActions": "DENY",
+                    "ruleData": "curl",
+                    "ruleMessages": "Request Indicates an automated program explored the site",
+                    "ruleSelectors": "REQUEST_HEADERS:User-Agent",
+                    "ruleTags": "AUTOMATION/MISC",
+                    "rules": "990011"
                 }
             ],
             "user_risk": {
@@ -189,16 +194,19 @@ An example event for `siem` looks as following:
         },
         "ip": "89.160.20.156"
     },
+    "cloud": {
+        "provider": "google cloud"
+    },
     "data_stream": {
         "dataset": "akamai.siem",
-        "namespace": "70206",
+        "namespace": "72529",
         "type": "logs"
     },
     "ecs": {
         "version": "8.11.0"
     },
     "elastic_agent": {
-        "id": "efbc3410-6820-4850-87d0-bbb212062a6d",
+        "id": "9d70aadf-eebc-4a79-9154-d09492f8ce88",
         "snapshot": false,
         "version": "8.18.0"
     },
@@ -208,25 +216,41 @@ An example event for `siem` looks as following:
             "network"
         ],
         "dataset": "akamai.siem",
-        "id": "187fac8e80dfae00",
-        "ingested": "2025-12-10T10:23:29Z",
+        "id": "2ab418ac8515f33",
+        "ingested": "2026-01-09T09:24:59Z",
         "kind": "event",
-        "original": "{\"attackData\":{\"clientIP\":\"89.160.20.156\",\"configId\":\"14227\",\"policyId\":\"qik1_26545\",\"ruleActions\":\"YWxlcnQ%3d%3bYWxlcnQ%3d%3bZGVueQ%3d%3d\",\"ruleData\":\"dGVsbmV0LmV4ZQ%3d%3d%3bdGVsbmV0LmV4ZQ%3d%3d%3bVmVjdG9yIFNjb3JlOiAxMCwgREVOWSB0aHJlc2hvbGQ6IDksIEFsZX \",\"ruleMessages\":\"U3lzdGVtIENvbW1hbmQgQWNjZXNz%3bU3lzdGVtIENvbW1hbmQgSW5qZWN0aW9u%3bQW5vbWFseSBTY29yZSBFeGNlZWRlZCBmb3 \",\"ruleSelectors\":\"QVJHUzpvcHRpb24%3d%3bQVJHUzpvcHRpb24%3d%3b\",\"ruleTags\":\"T1dBU1BfQ1JTL1dFQl9BVFRBQ0svRklMRV9JTkpFQ1RJT04%3d%3bT1dBU1BfQ1JTL1dFQl9BVFRBQ0svQ09NTUFORF9JTkpFQ1R \",\"ruleVersions\":\"NA%3d%3d%3bNA%3d%3d%3bMQ%3d%3d\",\"rules\":\"OTUwMDAy%3bOTUwMDA2%3bQ01ELUlOSkVDVElPTi1BTk9NQUxZ\"},\"botData\":{\"botScore\":\"100\",\"responseSegment\":\"3\"},\"clientData\":{\"appBundleId\":\"com.mydomain.myapp\",\"appVersion\":\"1.23\",\"sdkVersion\":\"4.7.1\",\"telemetryType\":\"2\"},\"format\":\"json\",\"geo\":{\"asn\":\"14618\",\"city\":\"ASHBURN\",\"continent\":\"288\",\"country\":\"US\",\"regionCode\":\"VA\"},\"httpMessage\":{\"bytes\":\"266\",\"host\":\"www.hmapi.com\",\"method\":\"GET\",\"path\":\"/\",\"port\":\"80\",\"protocol\":\"HTTP/1.1\",\"query\":\"option=com_jce%20telnet.exe\",\"requestHeaders\":\"User-Agent%3a%20BOT%2f0.1%20(BOT%20for%20JCE)%0d%0aAccept%3a%20text%2fhtml,application%2fxhtml+xml\",\"requestId\":\"187fac8e80dfae00\",\"responseHeaders\":\"Server%3a%20AkamaiGHost%0d%0aMime-Version%3a%201.0%0d%0aContent-Type%3a%20text%2fhtml%0d%0aContent-Length%3a%20150\",\"start\":1765319307,\"status\":\"200\"},\"type\":\"akamai_siem\",\"userRiskData\":{\"allow\":\"0\",\"general\":\"duc_1h:10|duc_1d:30\",\"risk\":\"udfp:1325gdg4g4343g/M|unp:74256/H\",\"score\":\"75\",\"status\":\"0\",\"trust\":\"ugp:US\",\"uuid\":\"964d54b7-0821-413a-a4d6-8131770ec8d5\"},\"version\":\"1.0\"}",
-        "start": "2025-12-09T22:28:27.000Z"
+        "start": "2016-08-11T13:45:33.026Z"
+    },
+    "gcs": {
+        "storage": {
+            "bucket": {
+                "name": "testbucket"
+            },
+            "object": {
+                "content_type": "application/x-ndjson",
+                "name": "siem.log"
+            }
+        }
     },
     "http": {
         "request": {
-            "id": "187fac8e80dfae00",
-            "method": "GET"
+            "id": "2ab418ac8515f33",
+            "method": "POST"
         },
         "response": {
-            "bytes": 266,
-            "status_code": 200
+            "bytes": 34523,
+            "status_code": 301
         },
-        "version": "1.1"
+        "version": "2"
     },
     "input": {
-        "type": "cel"
+        "type": "gcs"
+    },
+    "log": {
+        "file": {
+            "path": "gs://testbucket/siem.log"
+        },
+        "offset": 0
     },
     "network": {
         "protocol": "http",
@@ -264,16 +288,19 @@ An example event for `siem` looks as following:
         "ip": "89.160.20.156"
     },
     "tags": [
-        "preserve_original_event",
-        "akamai-siem",
-        "forwarded"
+        "forwarded",
+        "akamai-siem"
     ],
+    "tls": {
+        "version": "1.2",
+        "version_protocol": "tls"
+    },
     "url": {
-        "domain": "www.hmapi.com",
-        "full": "www.hmapi.com/?option=com_jce%20telnet.exe",
-        "path": "/",
+        "domain": "www.example.com",
+        "full": "www.example.com/examples/1/?a%3D..%2F..%2F..%2Fetc%2Fpasswd",
+        "path": "/examples/1/",
         "port": 80,
-        "query": "option=com_jce telnet.exe"
+        "query": "a=../../../etc/passwd"
     }
 }
 ```

@@ -1,4 +1,14 @@
 # newer versions go on top
+- version: "1.24.2"
+  changes:
+    - description: Transfer package ownership to elastic/security-service-integrations.
+      type: enhancement
+      link: https://github.com/elastic/integrations/pull/20626
+- version: "1.24.1"
+  changes:
+    - description: Remove duplicate security-solution-default tag references
+      type: bugfix
+      link: "https://github.com/elastic/integrations/pull/17021"
 - version: "1.24.0"
   changes:
     - description: Replace navigation with links panels.

@@ -7,6 +7,11 @@ provider "aws" {
       branch       = var.BRANCH
       build        = var.BUILD_ID
       created_date = var.CREATED_DATE
+
+      division = "engineering"
+      org      = "obs"
+      team     = "integration-experience"       # owner.github in manifest.yml
+      project  = "integrations-f5_bigip-package" # name in manifest.yml
     }
   }
 }
@@ -49,7 +54,7 @@ resource "aws_s3_object" "object" {
   key    = "test-log.log"
   source = "./files/test-log.log"
 
-  depends_on = [aws_sqs_queue.queue]
+  depends_on = [aws_s3_bucket_notification.bucket_notification]
 }
 
 output "queue_url" {

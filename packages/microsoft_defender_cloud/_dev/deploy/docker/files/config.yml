@@ -22,8 +22,8 @@ rules:
             "expires_in": 3599
           }
   # Refresh token to get access token: https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow#refresh-the-access-token
-  - path: /<tenant_id>/oauth2/token
-    methods: [ POST ]
+  - path: /<tenant_id>/oauth2/v2.0/token
+    methods: [POST]
     query_params:
       client_id: <client_id>
       client_secret: <client_secret>
@@ -31,8 +31,6 @@ rules:
       grant_type: refresh_token
       scope: https://management.azure.com/.default
     request_headers:
-      Authorization:
-        - "Basic dGVzdC1hcHAtaWQ6dGVzdC1zZWNyZXQ="
       Content-Type:
         - "application/x-www-form-urlencoded"
     responses:
@@ -43,7 +41,7 @@ rules:
         body: |-
           {{ minify_json `
           {
-            "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Ilg1ZVhrN",
+            "access_token": "eyJ0eabDVHDgdBDG59BRDG57DBDh56skjsbvDFBDge95sI6Ilg1ZVhrN",
             "token_type": "Bearer",
             "expires_in": 2,
             "scope": "https%3A%2F%2Fgraph.microsoft.com%2Fmail.read",
@@ -114,7 +112,7 @@ rules:
                 }
               }
             ],
-            "nextLink": "http://{{ hostname }}:{{ env "PORT" }}/subscriptions/5abcdef6-1234-5678-8912-e1234abcdef1/providers/Microsoft.Security/assessments?api-version=2021-06-01&NextLink=_muliCloud"
+            "nextLink": "http://{{ .request.host }}/subscriptions/5abcdef6-1234-5678-8912-e1234abcdef1/providers/Microsoft.Security/assessments?api-version=2021-06-01&NextLink=_muliCloud"
           }
   - path: /subscriptions/5abcdef6-1234-5678-8912-e1234abcdef1/providers/Microsoft.Security/assessments
     methods: [GET]
@@ -210,7 +208,7 @@ rules:
                 }
               }
             ],
-            "nextLink": "http://{{ hostname }}:{{ env "PORT" }}/subscriptions/5abcdef6-1234-5678-8912-e1234abcdef1/providers/Microsoft.Security/assessments?api-version=2021-06-01&NextLink=next1"
+            "nextLink": "http://{{ .request.host }}/subscriptions/5abcdef6-1234-5678-8912-e1234abcdef1/providers/Microsoft.Security/assessments?api-version=2021-06-01&NextLink=next1"
           }
   - path: /subscriptions/5abcdef6-1234-5678-8912-e1234abcdef1/resourcegroups/example-test_group/providers/microsoft.containerservice/managedclusters/example-test/securityentitydata/namespace-kube-system-pod-coredns-autoscaler-*-*-container-autoscaler/providers/Microsoft.Security/assessments/c2345673-abcd-0012-abcd-81234554321d/subAssessments
     methods: [GET]
@@ -389,7 +387,7 @@ rules:
                 }
               }
             ],
-            "nextLink": "http://{{ hostname }}:{{ env "PORT" }}/subscriptions/5abcdef6-1234-5678-8912-e1234abcdef1/resourcegroups/example-test_group/providers/microsoft.containerservice/managedclusters/example-test/securityentitydata/namespace-kube-system-pod-coredns-autoscaler-*-*-container-autoscaler/providers/Microsoft.Security/assessments/c2345673-abcd-0012-abcd-81234554321d/subAssessments?api-version=2019-01-01-preview&NextLink=__1"
+            "nextLink": "http://{{ .request.host }}/subscriptions/5abcdef6-1234-5678-8912-e1234abcdef1/resourcegroups/example-test_group/providers/microsoft.containerservice/managedclusters/example-test/securityentitydata/namespace-kube-system-pod-coredns-autoscaler-*-*-container-autoscaler/providers/Microsoft.Security/assessments/c2345673-abcd-0012-abcd-81234554321d/subAssessments?api-version=2019-01-01-preview&NextLink=__1"
           }
   - path: /subscriptions/5abcdef6-1234-5678-8912-e1234abcdef1/resourcegroups/example-dev_group/providers/microsoft.containerservice/managedclusters/example-dev/securityentitydata/namespace-kube-system-pod-metrics-server-*-*-container-metrics-server/providers/Microsoft.Security/assessments/cababcd3-5678-4006-1234-8abcdef123456d/subAssessments
     methods: [GET]
@@ -588,7 +586,7 @@ rules:
                 }
               }
             ],
-            "nextLink": "http://{{ hostname }}:{{ env "PORT" }}/subscriptions/5abcdef6-1234-5678-8912-e1234abcdef1/resourcegroups/example-dev_group/providers/microsoft.containerservice/managedclusters/example-dev/securityentitydata/namespace-kube-system-pod-metrics-server-*-*-container-metrics-server/providers/Microsoft.Security/assessments/cababcd3-5678-4006-1234-8abcdef123456d/subAssessments?api-version=2019-01-01-preview&NextLink=__1"
+            "nextLink": "http://{{ .request.host }}/subscriptions/5abcdef6-1234-5678-8912-e1234abcdef1/resourcegroups/example-dev_group/providers/microsoft.containerservice/managedclusters/example-dev/securityentitydata/namespace-kube-system-pod-metrics-server-*-*-container-metrics-server/providers/Microsoft.Security/assessments/cababcd3-5678-4006-1234-8abcdef123456d/subAssessments?api-version=2019-01-01-preview&NextLink=__1"
           }
   - path: /subscriptions/5abcdef6-1234-5678-8912-e1234abcdef1/resourcegroups/example-dev_group/providers/microsoft.containerservice/managedclusters/example-dev/securityentitydata/namespace-kube-system-pod-metrics-server-*-*-container-metrics-server/providers/Microsoft.Security/assessments/cababcd3-5678-4006-1234-8abcdef123456d/subAssessments
     methods: [GET]
@@ -922,5 +920,5 @@ rules:
                 }
               }
             ],
-            "nextLink": "http://{{ hostname }}:{{ env "PORT" }}/subscriptions/5abcdef6-1234-5678-8912-e1234abcdef1/resourcegroups/example-dev_group/providers/microsoft.containerservice/managedclusters/example-dev/securityentitydata/namespace-kube-system-pod-metrics-server-*-*-container-metrics-server/providers/Microsoft.Security/assessments/cababcd3-5678-4006-1234-8abcdef123456d/subAssessments?api-version=2019-01-01-preview&NextLink=next1"
+            "nextLink": "http://{{ .request.host }}/subscriptions/5abcdef6-1234-5678-8912-e1234abcdef1/resourcegroups/example-dev_group/providers/microsoft.containerservice/managedclusters/example-dev/securityentitydata/namespace-kube-system-pod-metrics-server-*-*-container-metrics-server/providers/Microsoft.Security/assessments/cababcd3-5678-4006-1234-8abcdef123456d/subAssessments?api-version=2019-01-01-preview&NextLink=next1"
           }

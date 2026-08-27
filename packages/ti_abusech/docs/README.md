@@ -21,7 +21,7 @@ This integration collects threat intelligence indicators into the following data
 - `malwarebazaar`: Collects malware payloads from MalwareBazaar via [MalwareBazaar API](https://bazaar.abuse.ch/api/#latest_additions).
 - `sslblacklist`: Collects SSL certificate based threat indicators blacklisted on SSLBL via [SSLBL API endpoint](https://sslbl.abuse.ch/blacklist/sslblacklist.csv).
 - `threatfox`: Collects threat indicators from ThreatFox via [ThreatFox API](https://threatfox.abuse.ch/api/#recent-iocs).
-- `url`: Collects malware URL based threat indicators from URLhaus via [URLhaus API](https://urlhaus.abuse.ch/api/#csv).
+- `url`: Collects recently added malware URL based threat indicators from URLhaus via [URLhaus API](https://urlhaus-api.abuse.ch/#urls-recent). The API returns at most 1000 entries from the last 3 days. The **Interval** setting must be short enough to avoid exceeding the 1000-entry limit between polls; otherwise the oldest URLs added in that window will be lost.
 
 ### Supported use cases
 
@@ -35,9 +35,15 @@ This integration installs [Elastic latest transforms](https://www.elastic.co/doc
 
 ### From abuse.ch
 
-abuse.ch requires an `Auth Key` (API key) for request authentication. Any requests made without this key will be rejected by the abuse.ch APIs.
+Which credentials you need depends on which datasets you enable, not on the integration as a whole:
 
-#### Obtain `Auth Key`
+- **ThreatFox threat indicators** (`threatfox`) and **MalwareBazaar payloads** (`malwarebazaar`) can use either API, selected with the shared **API Type** setting. The Community API requires an **Auth Key**. The Commercial API requires Spamhaus username and password credentials, which the integration exchanges for a short-lived JWT.
+- **Malware URLs** (`url`) and **Malware payloads** (`malware`) always query the URLhaus Community API and require an **Auth Key** regardless of **API Type**. Requests without the key are rejected.
+- **SSL Blacklisted Certificates** (`sslblacklist`) and **JA3 Fingerprints** (`ja3_fingerprints`) read the SSLBL feeds and use neither credential.
+
+Because **API Type** applies to the whole integration, selecting **Commercial API** does not remove the need for an **Auth Key** unless you also disable **Malware URLs** and **Malware payloads**.
+
+#### Obtain `Auth Key` (Community API)
 
 1. Sign up for a new account, or login into the [abuse.ch authentication portal](https://auth.abuse.ch).
 2. Connect with at least one authentication provider: Google, Github, X, or LinkedIn.
@@ -46,6 +52,17 @@ abuse.ch requires an `Auth Key` (API key) for request authentication. Any reques
 5. Copy the generated **Auth Key**.
 
 For more details, check the abuse.ch [Community First - New Authentication](https://abuse.ch/blog/community-first/) blog.
+
+#### Obtain Commercial API credentials
+
+Commercial API access uses JWT authentication. Create credentials in the Spamhaus Customer Portal, then configure the username and password in the integration. The integration authenticates to `/v1/login` and refreshes the JWT as needed.
+
+1. Log in to the Spamhaus [Customer Portal](https://portal.spamhaus.com).
+2. Navigate to **Product** > **abuse.ch API**.
+3. Under **Generate new credentials for JWT authentication**, fill out the required information and follow the on-screen instructions.
+4. Copy the generated **username** and **password**.
+
+For more details, check the abuse.ch commercial API documentation on [JWT authentication for endpoints available to query](https://abusech.docs.spamhaus.com/api-reference#description/jwt-authentication-for-endpoints-available-to-query).
 
 ## How do I deploy this integration?
 
@@ -71,7 +88,8 @@ Elastic Agent must be installed. For more details, check the Elastic Agent [inst
 
     * To **Collect abuse.ch logs via API**, you'll need to:
 
-        - Configure **Auth Key**.
+        - Configure **Auth Key (Community)**. The **Malware URLs** and **Malware payloads** datasets always need it, and **ThreatFox threat indicators** and **MalwareBazaar payloads** need it when **API Type** is **Community API**.
+        - To use the Commercial API for **ThreatFox threat indicators** and **MalwareBazaar payloads**, set **API Type** to **Commercial API** and configure **Username (Commercial)** and **Password (Commercial)**.
         - Enable/Disable the required datasets.
         - For each dataset, adjust the integration configuration parameters if required, including the URL, Interval, etc. to enable data collection.
 
@@ -94,6 +112,23 @@ Elastic Agent must be installed. For more details, check the Elastic Agent [inst
 
 ## Troubleshooting
 
+- **Upgrading to v5.0.0**: Version 5.0.0 moves **API Type**, **Username (Commercial)**, and **Password (Commercial)** from the MalwareBazaar data stream to the shared integration input. Fleet does not carry these values across that scope change. If you configured MalwareBazaar Commercial API on 4.2.0, re-enter the credentials after upgrade:
+    1. In Kibana, navigate to **Fleet** > **Agent policies**.
+    2. Select the policy containing the abuse.ch integration.
+    3. Edit the abuse.ch integration.
+    4. Set **API Type** to **Commercial API**, then enter **Username (Commercial)** and **Password (Commercial)** at the integration level (not under the MalwareBazaar data stream).
+    5. Under the MalwareBazaar data stream, expand **Advanced options** and reset **URL** to `https://mb-api.abuse.ch/api/v1/` if you had changed it to `https://api.spamhaus.com` for the 4.2.0 Commercial API. The Commercial API base URL is now configured once at the integration level via **Commercial API URL**.
+    6. Select **Save integration**.
+
+    Community API users who only use an Auth Key are unaffected. After this change, the same Spamhaus credentials apply to all commercial datasets (MalwareBazaar, ThreatFox, and future commercial data streams).
+- **Upgrading to v4.0.0**: Version 4.0.0 switches the URL data stream from the full export ZIP endpoint (`/downloads/json`) to the incremental JSON API (`/v1/urls/recent/`). When upgrading from a previous version, the URL setting in your integration policy retains the old value and must be updated manually:
+    1. In Kibana, navigate to **Fleet** > **Agent policies**.
+    2. Select the policy containing the abuse.ch integration.
+    3. Edit the abuse.ch integration.
+    4. Under the **Malware URLs** data stream, change the **URL** setting from `https://urlhaus.abuse.ch/downloads/json` to `https://urlhaus-api.abuse.ch/v1/urls/recent/`.
+    5. Select **Save integration**.
+
+    If the URL is not updated, the integration will log an error: `the URL is set to the deprecated full export endpoint (/downloads/json) which is no longer supported`. Additionally, the `labels.interval` field has been removed from URL data stream documents. If you have saved queries, detection rules, or dashboards that reference this field, remove those references. A new **IOC Expiration Duration** setting (default `90d`) now controls how long indicators remain active. Review this value and adjust it to match your organization's retention requirements.
 - When creating the **Auth Key** inside the [abuse.ch authentication](https://auth.abuse.ch/) portal, make sure you connect at least one additional authentication provider to ensure seemless access to the abuse.ch platform.
 - Check for captured ingestion errors inside Kibana. Ingestion errors, including API errors, are captured into `error.message` field.
     1. Navigate to **Analytics** > **Discover**.
@@ -104,6 +139,8 @@ Elastic Agent must be installed. For more details, check the Elastic Agent [inst
     All the abusec.ch API errors are captured inside the `error` fields.
     1. abuse.ch APIs return HTTP status `403 Forbidden` when the Auth Key is invalid. In such case, the `error.message` field is populated with message `query_status: unknown_auth_key` and `error.id` with `403 Forbidden`. To fix this, you need to regenerate the Auth Key in the [abuse.ch authentication portal](https://auth.abuse.ch/) and update the integration policy with newly generated Auth Key.
     2. abuse.ch APIs return HTTP status `500 Internal Server Error` when experiencing problem on the abuse.ch service. In such case, `error.message` field is populated with message `POST:500 Internal Server Error (500)` and `error.id` with `500 Internal Server Error`. This is likely a one-off scenario and the ingestion should resume normally in the subsequent request.
+    3. When **API Type** is **Community API** and **Auth Key (Community)** is not configured, MalwareBazaar and ThreatFox log `api_type is 'community' but auth_key is not configured` in `error.message` and `configuration_error` in `error.id`. Add **Auth Key (Community)** at the integration level.
+    4. When **API Type** is **Commercial API** and **Username (Commercial)** or **Password (Commercial)** is not configured, MalwareBazaar and ThreatFox log `api_type is 'commercial' but username/password are not configured` in `error.message` and `configuration_error` in `error.id`. Configure both fields at the integration level.
 - Since this integration supports the expiration of Indicators of Compromise (IoCs) using Elastic latest transform, the threat indicators are present in both source and destination indices. While this may appear to be duplicate ingestion, it is an implementation detail necessary for properly expiring threat indicators.
 - Because the latest copy of threat indicators is now indexed in two places, that is, in both source and destination indices, users must anticipate storage requirements accordingly. The ILM policies on source indices can be tuned to manage their data retention period.
 - For help with Elastic ingest tools, check [Common problems](https://www.elastic.co/docs/troubleshoot/ingest/fleet/common-problems).
@@ -187,6 +224,7 @@ For more information on architectures that can be used for scaling this integrat
 |---|---|---|
 | @timestamp | Event timestamp. | date |
 | abusech.malwarebazaar.anonymous | Identifies if the sample was submitted anonymously. | long |
+| abusech.malwarebazaar.archive_pw | Password to decrypt a password-protected archive sample. | keyword |
 | abusech.malwarebazaar.code_sign.algorithm | Algorithm used to generate the public key. | keyword |
 | abusech.malwarebazaar.code_sign.cscb_listed | Whether the certificate is present on the Code Signing Certificate Blocklist (CSCB). | boolean |
 | abusech.malwarebazaar.code_sign.cscb_reason | Why the certificate is present on the Code Signing Certificate Blocklist (CSCB). | keyword |
@@ -197,13 +235,60 @@ For more information on architectures that can be used for scaling this integrat
 | abusech.malwarebazaar.code_sign.thumbprint_algorithm | Algorithm used to create thumbprint. | keyword |
 | abusech.malwarebazaar.code_sign.valid_from | Time at which the certificate is first considered valid. | date |
 | abusech.malwarebazaar.code_sign.valid_to | Time at which the certificate is no longer considered valid. | keyword |
+| abusech.malwarebazaar.comment | Comment provided by the submitter. | keyword |
+| abusech.malwarebazaar.comments.comment | The escaped comment text itself. | keyword |
+| abusech.malwarebazaar.comments.date_added | Timestamp when this comment has been made (RFC3339). | date |
+| abusech.malwarebazaar.comments.display_name | Twitter display name. | keyword |
+| abusech.malwarebazaar.comments.id | Unique ID that identifies this comment. | keyword |
+| abusech.malwarebazaar.comments.twitter_handle | Twitter handle who wrote this comment. | keyword |
 | abusech.malwarebazaar.deleted_at | The indicator expiration timestamp. | date |
+| abusech.malwarebazaar.delivery_method | Delivery method used to spread the malware sample. | keyword |
 | abusech.malwarebazaar.dhash_icon | In case the file is a PE executable: dhash of the samples icon. | keyword |
+| abusech.malwarebazaar.file_information.context | The context type for the information value. | keyword |
+| abusech.malwarebazaar.file_information.value | The contextual information value. | keyword |
+| abusech.malwarebazaar.file_name | Name of the malware sample file. | keyword |
+| abusech.malwarebazaar.file_size | Size of the file in bytes. | long |
+| abusech.malwarebazaar.file_type | Type of the file. | keyword |
+| abusech.malwarebazaar.file_type_mime | MIME type of the file. | keyword |
+| abusech.malwarebazaar.gimphash | GIMP hash of the sample. | keyword |
+| abusech.malwarebazaar.humanhash | The file's HumanHash - a human-readable representation of digests. | keyword |
+| abusech.malwarebazaar.imphash | Import hash of the PE file. | keyword |
+| abusech.malwarebazaar.intelligence.clamav | ClamAV detection name for the sample. | keyword |
 | abusech.malwarebazaar.intelligence.downloads | Number of downloads from MalwareBazaar. | long |
 | abusech.malwarebazaar.intelligence.mail.Generic | Malware seen in generic spam traffic. | keyword |
 | abusech.malwarebazaar.intelligence.mail.IT | Malware seen in IT spam traffic. | keyword |
 | abusech.malwarebazaar.intelligence.uploads | Number of uploads from MalwareBazaar. | long |
 | abusech.malwarebazaar.ioc_expiration_duration | The configured expiration duration. | keyword |
+| abusech.malwarebazaar.magika | Magika AI-powered file type identification result. | keyword |
+| abusech.malwarebazaar.md5_hash | MD5 hash of the sample. | keyword |
+| abusech.malwarebazaar.ole_information.oleid.application_name | The name of the application that created the file, if retrievable from metadata. | keyword |
+| abusech.malwarebazaar.ole_information.oleid.encrypted | Indicates whether the file is encrypted or password-protected, which can hinder analysis of its content. | boolean |
+| abusech.malwarebazaar.ole_information.oleid.excel | True if the file appears to be a Microsoft Excel workbook. | boolean |
+| abusech.malwarebazaar.ole_information.oleid.flash_objects | True if the file contains embedded Flash objects, which are considered risky as they can execute code. | boolean |
+| abusech.malwarebazaar.ole_information.oleid.has_summaryinfo_stream | Shows whether the file contains a SummaryInformation stream, which stores standard metadata such as title, author, and creation date. | boolean |
+| abusech.malwarebazaar.ole_information.oleid.maldoc_score | A heuristic score from 0 to 100 reflecting how suspicious the document is for being a malicious document (maldoc). Higher scores mean higher risk. | long |
+| abusech.malwarebazaar.ole_information.oleid.objectpool | Indicates if the file contains an ObjectPool storage, which holds embedded OLE objects. These can hide malicious payloads. | boolean |
+| abusech.malwarebazaar.ole_information.oleid.ole_format | The overall file format. Common values include OLE, OpenXML, or Unknown. | keyword |
+| abusech.malwarebazaar.ole_information.oleid.powerpoint | True if the file appears to be a Microsoft PowerPoint presentation. | boolean |
+| abusech.malwarebazaar.ole_information.oleid.vba_macros | Shows whether the file contains VBA macros, which are often used for automation but also frequently exploited for malware. | boolean |
+| abusech.malwarebazaar.ole_information.oleid.visio | True if the file appears to be a Microsoft Visio document. | boolean |
+| abusech.malwarebazaar.ole_information.oleid.word | True if the file appears to be a Microsoft Word document. | boolean |
+| abusech.malwarebazaar.ole_information.olevba.description | A description of the detection. | keyword |
+| abusech.malwarebazaar.ole_information.olevba.keyword | The keyword that triggered the detection. | keyword |
+| abusech.malwarebazaar.ole_information.olevba.type | The type of the detection. | keyword |
+| abusech.malwarebazaar.reporter | Reporter who submitted the sample. | keyword |
+| abusech.malwarebazaar.sha1_hash | SHA-1 hash of the sample. | keyword |
+| abusech.malwarebazaar.sha256_hash | SHA-256 hash of the sample. | keyword |
+| abusech.malwarebazaar.signature | Malware signature name. | keyword |
+| abusech.malwarebazaar.ssdeep | SSDEEP hash of the sample. | keyword |
+| abusech.malwarebazaar.telfhash | TLSH hash of the sample. | keyword |
+| abusech.malwarebazaar.tlsh | TLSH hash of the sample. | keyword |
+| abusech.malwarebazaar.trid | TrID file type identification results. | keyword |
+| abusech.malwarebazaar.trid_percent | TRID file type identification confidence percentage. | float |
+| abusech.malwarebazaar.vendor_intel.cape.detection | The detection name of the malware sample. | keyword |
+| abusech.malwarebazaar.vendor_intel.cape.link | The URL to the analysis report. | keyword |
+| abusech.malwarebazaar.vendor_intel.spamhaus_hbl.detection | The detection label. | keyword |
+| abusech.malwarebazaar.vendor_intel.spamhaus_hbl.link | The link to the HBL. | keyword |
 | cloud.image.id | Image ID for the cloud instance. | keyword |
 | data_stream.dataset | Data stream dataset name. | constant_keyword |
 | data_stream.namespace | Data stream namespace. | constant_keyword |
@@ -260,10 +345,20 @@ For more information on architectures that can be used for scaling this integrat
 | Field | Description | Type |
 |---|---|---|
 | @timestamp | Event timestamp. | date |
+| abusech.threatfox.comment | An optional comment from the reporter. | match_only_text |
 | abusech.threatfox.confidence_level | Confidence level between 0-100. | long |
+| abusech.threatfox.credits.credits_amount | The number of credits awarded. | long |
+| abusech.threatfox.credits.credits_from | The platform that awarded the credits. | keyword |
 | abusech.threatfox.deleted_at | The indicator expiration timestamp. | date |
 | abusech.threatfox.ioc_expiration_duration | The configured expiration duration. | keyword |
+| abusech.threatfox.is_compromised | Whether the shared IOC is a compromised resource. | boolean |
 | abusech.threatfox.malware | The malware associated with the IOC. | keyword |
+| abusech.threatfox.malware_samples.malware_bazaar | The community API URL to the sample on MalwareBazaar. | keyword |
+| abusech.threatfox.malware_samples.malware_bazaar_url | The URL to the sample on MalwareBazaar. | keyword |
+| abusech.threatfox.malware_samples.md5_hash | The MD5 hash of the sample. | keyword |
+| abusech.threatfox.malware_samples.sha256_hash | The SHA256 hash of the sample. | keyword |
+| abusech.threatfox.malware_samples.timestamp | The timestamp when the sample was seen. | date |
+| abusech.threatfox.sightings | The number of sightings of the IOC. | long |
 | abusech.threatfox.tags | A list of tags associated with the queried malware sample. | keyword |
 | abusech.threatfox.threat_type | The type of threat. | keyword |
 | abusech.threatfox.threat_type_desc | The threat descsription. | keyword |
@@ -298,6 +393,7 @@ For more information on architectures that can be used for scaling this integrat
 | abusech.url.blacklists.surbl | If the indicator is listed on the surbl blacklist. | keyword |
 | abusech.url.deleted_at | The timestamp when the indicator is (will be) deleted. | date |
 | abusech.url.id | The ID of the indicator. | keyword |
+| abusech.url.ioc_expiration_duration | The configured expiration duration. | keyword |
 | abusech.url.larted | Indicates whether the malware URL has been reported to the hosting provider (true or false). | boolean |
 | abusech.url.last_online | Last timestamp when the URL has been serving malware. | date |
 | abusech.url.reporter | The Twitter handle of the reporter that has reported this malware URL (or anonymous). | keyword |
@@ -315,7 +411,6 @@ For more information on architectures that can be used for scaling this integrat
 | host.os.build | OS build information. | keyword |
 | host.os.codename | OS codename, if any. | keyword |
 | input.type | Type of Filebeat input. | keyword |
-| labels.interval | User-configured value for `Interval` setting. This is used in calculation of indicator expiration time. | keyword |
 | labels.is_ioc_transform_source | Indicates whether an IOC is in the raw source data stream, or the in latest destination index. | constant_keyword |
 | log.flags | Flags for the log file. | keyword |
 | log.offset | Offset of the entry in the log file. | long |
@@ -490,37 +585,40 @@ An example event for `malwarebazaar` looks as following:
 
 ```json
 {
-    "@timestamp": "2025-07-16T06:30:59.281Z",
+    "@timestamp": "2026-07-21T06:07:08.418Z",
     "abusech": {
         "malwarebazaar": {
-            "anonymous": 0,
+            "comment": "Commercial API test sample",
             "deleted_at": "2021-10-10T14:02:45.000Z",
+            "delivery_method": "email_attachment",
             "intelligence": {
+                "clamav": "Win.Trojan.RedLineStealer.UNOFFICIAL",
                 "downloads": 11,
                 "uploads": 1
             },
-            "ioc_expiration_duration": "5d"
+            "ioc_expiration_duration": "5d",
+            "magika": "pebin"
         }
     },
     "agent": {
-        "ephemeral_id": "f5b70b3f-5d2b-4d55-96b0-dc8e46e10b9a",
-        "id": "372b884d-d232-4e1e-806c-d08ae525f868",
-        "name": "elastic-agent-37187",
+        "ephemeral_id": "566c9dd5-0925-4373-8f9e-afceddad643e",
+        "id": "87f8e459-7960-4e81-8a78-4d7059ac2206",
+        "name": "elastic-agent-97488",
         "type": "filebeat",
-        "version": "8.18.0"
+        "version": "8.19.0"
     },
     "data_stream": {
         "dataset": "ti_abusech.malwarebazaar",
-        "namespace": "64456",
+        "namespace": "50283",
         "type": "logs"
     },
     "ecs": {
         "version": "8.11.0"
     },
     "elastic_agent": {
-        "id": "372b884d-d232-4e1e-806c-d08ae525f868",
-        "snapshot": true,
-        "version": "8.18.0"
+        "id": "87f8e459-7960-4e81-8a78-4d7059ac2206",
+        "snapshot": false,
+        "version": "8.19.0"
     },
     "event": {
         "agent_id_status": "verified",
@@ -528,15 +626,19 @@ An example event for `malwarebazaar` looks as following:
             "threat"
         ],
         "dataset": "ti_abusech.malwarebazaar",
-        "ingested": "2025-07-16T06:31:02Z",
+        "ingested": "2026-07-21T06:07:11Z",
         "kind": "enrichment",
-        "original": "{\"anonymous\":0,\"code_sign\":[],\"dhash_icon\":null,\"file_name\":\"7a6c03013a2f2ab8b9e8e7e5d226ea89e75da72c1519e.exe\",\"file_size\":432640,\"file_type\":\"exe\",\"file_type_mime\":\"application/x-dosexec\",\"first_seen\":\"2021-10-05 14:02:45\",\"imphash\":\"f34d5f2d4577ed6d9ceec516c1f5a744\",\"intelligence\":{\"clamav\":null,\"downloads\":\"11\",\"mail\":null,\"uploads\":\"1\"},\"last_seen\":null,\"md5_hash\":\"1fc1c2997c8f55ac10496b88e23f5320\",\"origin_country\":\"FR\",\"reporter\":\"abuse_ch\",\"sha1_hash\":\"42c7153680d7402e56fe022d1024aab49a9901a0\",\"sha256_hash\":\"7a6c03013a2f2ab8b9e8e7e5d226ea89e75da72c1519e78fd28b2253ea755c28\",\"sha3_384_hash\":\"d63e73b68973bc73ab559549aeee2141a48b8a3724aabc0d81fb14603c163a098a5a10be9f6d33b888602906c0d89955\",\"signature\":\"RedLineStealer\",\"ssdeep\":\"12288:jhhl1Eo+iEXvpb1C7drqAd1uUaJvzXGyO2F5V3bS1jsTacr:7lL\",\"tags\":[\"exe\",\"RedLineStealer\"],\"telfhash\":null,\"tlsh\":\"T13794242864BFC05994E3EEA12DDCA8FBD99A55E3640C743301B4633B8B52B84DE4F479\"}",
+        "module": "ti_abusech",
+        "original": "{\"anonymous\":false,\"comment\":\"Commercial API test sample\",\"delivery_method\":\"email_attachment\",\"file_name\":\"7a6c03013a2f2ab8b9e8e7e5d226ea89e75da72c1519e78fd28b2253ea755c28.exe\",\"file_size\":432640,\"file_type\":\"exe\",\"file_type_mime\":\"application/x-dosexec\",\"first_seen\":\"2021-10-05T14:02:45Z\",\"imphash\":\"f34d5f2d4577ed6d9ceec516c1f5a744\",\"intelligence\":{\"clamav\":[\"Win.Trojan.RedLineStealer.UNOFFICIAL\"],\"downloads\":11,\"uploads\":1},\"magika\":\"pebin\",\"md5_hash\":\"1fc1c2997c8f55ac10496b88e23f5320\",\"origin_country\":\"FR\",\"reporter\":\"abuse_ch\",\"sha1_hash\":\"42c7153680d7402e56fe022d1024aab49a9901a0\",\"sha256_hash\":\"7a6c03013a2f2ab8b9e8e7e5d226ea89e75da72c1519e78fd28b2253ea755c28\",\"sha3_384_hash\":\"d63e73b68973bc73ab559549aeee2141a48b8a3724aabc0d81fb14603c163a098a5a10be9f6d33b888602906c0d89955\",\"signature\":\"RedLineStealer\",\"ssdeep\":\"12288:jhhl1Eo+iEXvpb1C7drqAd1uUaJvzXGyO2F5V3bS1jsTacr:7lL\",\"tags\":[\"exe\",\"RedLineStealer\"],\"tlsh\":\"T13794242864BFC05994E3EEA12DDCA8FBD99A55E3640C743301B4633B8B52B84DE4F479\"}",
         "type": [
             "indicator"
         ]
     },
     "input": {
         "type": "cel"
+    },
+    "labels": {
+        "is_ioc_transform_source": "true"
     },
     "related": {
         "hash": [
@@ -557,6 +659,10 @@ An example event for `malwarebazaar` looks as following:
         "RedLineStealer"
     ],
     "threat": {
+        "feed": {
+            "dashboard_id": "ti_abusech-c0d8d1f0-3b20-11ec-ae50-2fdf1e96c6a6",
+            "name": "AbuseCH MalwareBazaar"
+        },
         "indicator": {
             "file": {
                 "extension": "exe",
@@ -569,7 +675,7 @@ An example event for `malwarebazaar` looks as following:
                     "tlsh": "T13794242864BFC05994E3EEA12DDCA8FBD99A55E3640C743301B4633B8B52B84DE4F479"
                 },
                 "mime_type": "application/x-dosexec",
-                "name": "7a6c03013a2f2ab8b9e8e7e5d226ea89e75da72c1519e.exe",
+                "name": "7a6c03013a2f2ab8b9e8e7e5d226ea89e75da72c1519e78fd28b2253ea755c28.exe",
                 "pe": {
                     "imphash": "f34d5f2d4577ed6d9ceec516c1f5a744"
                 },
@@ -673,7 +779,7 @@ An example event for `threatfox` looks as following:
 
 ```json
 {
-    "@timestamp": "2025-07-16T06:31:50.732Z",
+    "@timestamp": "2026-08-06T11:27:17.172Z",
     "abusech": {
         "threatfox": {
             "confidence_level": 100,
@@ -685,24 +791,24 @@ An example event for `threatfox` looks as following:
         }
     },
     "agent": {
-        "ephemeral_id": "49a54718-d50a-45cf-8da6-597e14572d1b",
-        "id": "07477042-3fd0-44e5-83e1-d33c53a1b34d",
-        "name": "elastic-agent-57963",
+        "ephemeral_id": "a6fdc71e-dcdc-496d-865e-6b937966c0e0",
+        "id": "344ab28a-1271-4735-a3cf-68982b6783af",
+        "name": "elastic-agent-56347",
         "type": "filebeat",
-        "version": "8.18.0"
+        "version": "9.1.0"
     },
     "data_stream": {
         "dataset": "ti_abusech.threatfox",
-        "namespace": "90202",
+        "namespace": "66062",
         "type": "logs"
     },
     "ecs": {
         "version": "8.11.0"
     },
     "elastic_agent": {
-        "id": "07477042-3fd0-44e5-83e1-d33c53a1b34d",
-        "snapshot": true,
-        "version": "8.18.0"
+        "id": "344ab28a-1271-4735-a3cf-68982b6783af",
+        "snapshot": false,
+        "version": "9.1.0"
     },
     "event": {
         "agent_id_status": "verified",
@@ -711,15 +817,19 @@ An example event for `threatfox` looks as following:
         ],
         "dataset": "ti_abusech.threatfox",
         "id": "841537",
-        "ingested": "2025-07-16T06:31:53Z",
+        "ingested": "2026-08-06T11:27:20Z",
         "kind": "enrichment",
-        "original": "{\"confidence_level\":100,\"first_seen\":\"2022-08-05 19:43:08 UTC\",\"id\":\"841537\",\"ioc\":\"wizzy.hopto.org\",\"ioc_type\":\"domain\",\"ioc_type_desc\":\"Domain that is used for botnet Command\\u0026control (C\\u0026C)\",\"last_seen\":null,\"malware\":\"win.asyncrat\",\"malware_alias\":null,\"malware_malpedia\":\"https://malpedia.caad.fkie.fraunhofer.de/details/win.asyncrat\",\"malware_printable\":\"AsyncRAT\",\"reference\":\"https://tria.ge/220805-w57pxsgae2\",\"reporter\":\"AndreGironda\",\"tags\":[\"asyncrat\"],\"threat_type\":\"botnet_cc\",\"threat_type_desc\":\"Indicator that identifies a botnet command\\u0026control server (C\\u0026C)\"}",
+        "module": "ti_abusech",
+        "original": "{\"confidence_level\":100,\"first_seen\":\"2022-08-05 19:43:08 UTC\",\"id\":\"841537\",\"ioc\":\"wizzy.hopto.org\",\"ioc_type\":\"domain\",\"ioc_type_desc\":\"Domain that is used for botnet Command\\u0026control (C\\u0026C)\",\"last_seen\":null,\"malware\":\"win.asyncrat\",\"malware_alias\":null,\"malware_malpedia\":\"https://malpedia.caad.fkie.fraunhofer.de/details/win.asyncrat\",\"malware_printable\":\"AsyncRAT\",\"reference\":\"https://tria.ge/220805-w57pxsgae2\",\"reporter\":\"test_reporter\",\"tags\":[\"asyncrat\"],\"threat_type\":\"botnet_cc\",\"threat_type_desc\":\"Indicator that identifies a botnet command\\u0026control server (C\\u0026C)\"}",
         "type": [
             "indicator"
         ]
     },
     "input": {
         "type": "cel"
+    },
+    "labels": {
+        "is_ioc_transform_source": "true"
     },
     "tags": [
         "preserve_original_event",
@@ -728,6 +838,10 @@ An example event for `threatfox` looks as following:
         "asyncrat"
     ],
     "threat": {
+        "feed": {
+            "dashboard_id": "ti_abusech-c0d8d1f0-3b20-11ec-ae50-2fdf1e96c6a6",
+            "name": "AbuseCH Threat Fox"
+        },
         "indicator": {
             "confidence": "High",
             "description": "Domain that is used for botnet Command&control (C&C)",
@@ -736,7 +850,7 @@ An example event for `threatfox` looks as following:
                 "tlp": "WHITE"
             },
             "name": "wizzy.hopto.org",
-            "provider": "AndreGironda",
+            "provider": "test_reporter",
             "reference": "https://tria.ge/220805-w57pxsgae2",
             "type": "domain-name",
             "url": {
@@ -757,34 +871,40 @@ An example event for `url` looks as following:
 
 ```json
 {
-    "@timestamp": "2025-07-16T06:32:41.644Z",
+    "@timestamp": "2026-05-11T18:17:40.972Z",
     "abusech": {
         "url": {
-            "deleted_at": "2025-07-16T07:31:14.625Z",
-            "id": "2786904",
+            "blacklists": {
+                "spamhaus_dbl": "not listed",
+                "surbl": "not listed"
+            },
+            "deleted_at": "2022-01-03T13:57:05.000Z",
+            "id": "1656008",
+            "ioc_expiration_duration": "90d",
+            "larted": true,
             "threat": "malware_download",
             "url_status": "online"
         }
     },
     "agent": {
-        "ephemeral_id": "8039c627-ea96-4027-8751-2ff7db77251b",
-        "id": "9106f11b-d54d-46d0-8ace-39e4fff1157b",
-        "name": "elastic-agent-41888",
+        "ephemeral_id": "fbc79c61-889e-4edd-b733-17bc0b3df43d",
+        "id": "dbaec5f5-5537-414c-9177-835ebc75386b",
+        "name": "elastic-agent-77348",
         "type": "filebeat",
-        "version": "8.18.0"
+        "version": "9.3.1"
     },
     "data_stream": {
         "dataset": "ti_abusech.url",
-        "namespace": "49664",
+        "namespace": "12831",
         "type": "logs"
     },
     "ecs": {
         "version": "8.11.0"
     },
     "elastic_agent": {
-        "id": "9106f11b-d54d-46d0-8ace-39e4fff1157b",
-        "snapshot": true,
-        "version": "8.18.0"
+        "id": "dbaec5f5-5537-414c-9177-835ebc75386b",
+        "snapshot": false,
+        "version": "9.3.1"
     },
     "event": {
         "agent_id_status": "verified",
@@ -792,9 +912,10 @@ An example event for `url` looks as following:
             "threat"
         ],
         "dataset": "ti_abusech.url",
-        "ingested": "2025-07-16T06:32:44Z",
+        "ingested": "2026-05-11T18:17:43Z",
         "kind": "enrichment",
-        "original": "{\"dateadded\":\"2024-03-19 11:34:09 UTC\",\"id\":\"2786904\",\"last_online\":\"2024-03-19 11:34:09 UTC\",\"reporter\":\"lrz_urlhaus\",\"tags\":[\"elf\",\"Mozi\"],\"threat\":\"malware_download\",\"url\":\"http://115.55.244.160:41619/Mozi.m\",\"url_status\":\"online\",\"urlhaus_link\":\"https://urlhaus.abuse.ch/url/2786904/\"}",
+        "module": "ti_abusech",
+        "original": "{\"blacklists\":{\"spamhaus_dbl\":\"not listed\",\"surbl\":\"not listed\"},\"date_added\":\"2021-10-05 13:57:05 UTC\",\"host\":\"81.2.69.142\",\"id\":\"1656008\",\"larted\":\"true\",\"reporter\":\"tammeto\",\"tags\":null,\"threat\":\"malware_download\",\"url\":\"http://81.2.69.142:55871/mozi.m\",\"url_status\":\"online\",\"urlhaus_reference\":\"https://urlhaus.abuse.ch/url/1656008/\"}",
         "type": [
             "indicator"
         ]
@@ -803,30 +924,32 @@ An example event for `url` looks as following:
         "type": "cel"
     },
     "labels": {
-        "interval": "1h"
+        "is_ioc_transform_source": "true"
     },
     "tags": [
         "preserve_original_event",
         "forwarded",
-        "abusech-url",
-        "elf",
-        "Mozi"
+        "abusech-url"
     ],
     "threat": {
+        "feed": {
+            "dashboard_id": "ti_abusech-c0d8d1f0-3b20-11ec-ae50-2fdf1e96c6a6",
+            "name": "AbuseCH URL"
+        },
         "indicator": {
-            "first_seen": "2024-03-19T11:34:09.000Z",
-            "last_seen": "2024-03-19T11:34:09.000Z",
-            "name": "http://115.55.244.160:41619/Mozi.m",
-            "provider": "lrz_urlhaus",
-            "reference": "https://urlhaus.abuse.ch/url/2786904/",
+            "first_seen": "2021-10-05T13:57:05.000Z",
+            "ip": "81.2.69.142",
+            "name": "http://81.2.69.142:55871/mozi.m",
+            "provider": "tammeto",
+            "reference": "https://urlhaus.abuse.ch/url/1656008/",
             "type": "url",
             "url": {
-                "domain": "115.55.244.160",
+                "domain": "81.2.69.142",
                 "extension": "m",
-                "full": "http://115.55.244.160:41619/Mozi.m",
-                "original": "http://115.55.244.160:41619/Mozi.m",
-                "path": "/Mozi.m",
-                "port": 41619,
+                "full": "http://81.2.69.142:55871/mozi.m",
+                "original": "http://81.2.69.142:55871/mozi.m",
+                "path": "/mozi.m",
+                "port": 55871,
                 "scheme": "http"
             }
         }
@@ -849,11 +972,11 @@ This integration datasets use the following APIs:
 - `malwarebazaar`: [MalwareBazaar API](https://bazaar.abuse.ch/api/#latest_additions).
 - `sslblacklist`: [SSLBL API](https://sslbl.abuse.ch/blacklist/sslblacklist.csv).
 - `threatfox`: [ThreatFox API](https://threatfox.abuse.ch/api/#recent-iocs).
-- `url`: [URLhaus API](https://urlhaus.abuse.ch/api/#csv).
+- `url`: [URLhaus API](https://urlhaus-api.abuse.ch/#urls-recent).
 
 ### Expiration of Indicators of Compromise (IOCs)
 
-All abuse.ch datasets now support indicator expiration. For the `URL` dataset, a full list of active threat indicators are ingested at every interval. For other datasets, namely `Malware`, `MalwareBazaar`, and `ThreatFox`, the threat indicators are expired after the duration `IOC Expiration Duration` is configured in the integration setting. An [Elastic Transform](https://www.elastic.co/guide/en/elasticsearch/reference/current/transforms.html) is created for every source index to make sure only active threat indicators are available to the end users. Each transform creates a destination index named `logs-ti_abusech_latest.dest_*` which only contains active and unexpired threat indicators. The indicator match rules and dashboards are updated to list only active threat indicators.
+All abuse.ch datasets now support indicator expiration. The `URL`, `Malware`, `MalwareBazaar`, and `ThreatFox` datasets expire threat indicators after the duration configured in the `IOC Expiration Duration` setting (default `90d`). An [Elastic Transform](https://www.elastic.co/guide/en/elasticsearch/reference/current/transforms.html) is created for every source index to make sure only active threat indicators are available to the end users. Each transform creates a destination index named `logs-ti_abusech_latest.dest_*` which only contains active and unexpired threat indicators. The indicator match rules and dashboards are updated to list only active threat indicators.
 Destinations indices are aliased to `logs-ti_abusech_latest.<data_stream_name>`.
 
 | Source Data stream                  | Destination Index Pattern                        | Destination Alias                       |

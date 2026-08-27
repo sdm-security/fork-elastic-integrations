@@ -43,7 +43,7 @@ Example Host Configuration: `http://example.com:9090`
 
 ## Setup
   
-For step-by-step instructions on how to set up an integration, check the [quick start](integrations://docs/extend/quick-start.md).
+For step-by-step instructions on how to set up an integration, check the [quick start](integrations://extend/quick-start.md).
 
 **NOTE:** It is recommended to configure the application firewall to enable CEF-formatted logs.
 
@@ -1307,6 +1307,7 @@ Check this [reference document](https://www.elastic.co/guide/en/ecs/current/ecs-
 | citrix_adc.log.html_url |  | keyword |
 | citrix_adc.log.http_resources_accessed |  | keyword |
 | citrix_adc.log.ica_rtt |  | keyword |
+| citrix_adc.log.ica_uuid | ICA session UUID extracted from the optional bracket prefix in ICASTART and ICAEND_CONNSTAT messages (for example, [ICAUUID=…]). | keyword |
 | citrix_adc.log.icap_server.ip |  | ip |
 | citrix_adc.log.icap_server.port |  | long |
 | citrix_adc.log.id |  | keyword |
@@ -1361,6 +1362,7 @@ Check this [reference document](https://www.elastic.co/guide/en/ecs/current/ecs-
 | citrix_adc.log.peid |  | keyword |
 | citrix_adc.log.policy_action |  | keyword |
 | citrix_adc.log.policy_violation |  | keyword |
+| citrix_adc.log.ppe | Packet Processing Engine identifier. | keyword |
 | citrix_adc.log.process.id |  | long |
 | citrix_adc.log.process.name |  | keyword |
 | citrix_adc.log.profile |  | keyword |
@@ -1421,6 +1423,7 @@ Check this [reference document](https://www.elastic.co/guide/en/ecs/current/ecs-
 | citrix_adc.log.total_policies_denied |  | long |
 | citrix_adc.log.total_tcp_connections |  | long |
 | citrix_adc.log.total_udp_flows |  | long |
+| citrix_adc.log.transaction_id | Transaction identifier. | keyword |
 | citrix_adc.log.translated_destination.ip |  | ip |
 | citrix_adc.log.translated_destination.port |  | long |
 | citrix_adc.log.transport |  | keyword |

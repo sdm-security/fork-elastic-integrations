@@ -10,60 +10,9 @@ processors:
       ignore_failure: true
       ignore_missing: true
       if: ctx.event?.original == null
-  - grok:
-      tag: grok_audit_original
-      field: event.original
-      pattern_definitions:
-        AUDIT_TYPE: 'type=%{NOTSPACE:auditd.log.record_type}'
-        AUDIT_NODE: 'node=%{IPORHOST:auditd.log.node} '
-        AUDIT_PREFIX: '^(?:%{AUDIT_NODE})?%{AUDIT_TYPE} msg=audit\(%{NUMBER:auditd.log.epoch}:%{NUMBER:auditd.log.sequence}\):(%{DATA})?'
-        AUDIT_KEY_VALUES: '%{WORD}=%{GREEDYDATA}'
-        AVC_PREFIX: 'avc:%{SPACE}%{WORD:auditd.log.avc.action}%{SPACE}{%{SPACE}%{WORD:auditd.log.avc.request}%{SPACE}}%{SPACE}for%{SPACE}'
-        MESSAGE: "(?:'(?:%{AVC_PREFIX}|[^=]*\\s)?%{ANY:auditd.log.sub_kv}'|\"([^=]*\\s)?%{ANY:auditd.log.sub_kv}\")"
-        GS: '\x1d'
-        ENRICHED_FIELDS: '((?:%{GS})%{AUDIT_KEY_VALUES:auditd.log.sub_kv_enriched})?'
-        ANY: ".*"
-      patterns:
-        - '%{AUDIT_PREFIX} %{AUDIT_KEY_VALUES:auditd.log.kv} old auid=%{NUMBER:auditd.log.old_auid} new auid=%{NUMBER:auditd.log.new_auid} old ses=%{NUMBER:auditd.log.old_ses} new ses=%{NUMBER:auditd.log.new_ses}'
-        - '%{AUDIT_PREFIX} %{AUDIT_KEY_VALUES:auditd.log.kv} msg=%{MESSAGE}%{ENRICHED_FIELDS}'
-        - '%{AUDIT_PREFIX} %{AUDIT_KEY_VALUES:auditd.log.kv}%{GS}%{WORD:auditd.log.original_field}={ %{AUDIT_KEY_VALUES:auditd.log.sub_kv} }'
-        - '%{AUDIT_PREFIX} %{AVC_PREFIX}?%{AUDIT_KEY_VALUES:auditd.log.kv}'
-        - '%{AUDIT_PREFIX}'
-        - '%{AUDIT_TYPE} %{AUDIT_KEY_VALUES:auditd.log.kv}'
-  - kv:
-      field: auditd.log.kv
-      field_split: '\s+(?![\w\"]+?(\s+|$))'
-      value_split: '(?<!\\)='
-      target_field: auditd.log
-  - kv:
-      field: auditd.log.sub_kv
-      field_split: '\s+(?=[^\s]+=)'
-      value_split: '='
-      target_field: auditd.log
-      ignore_missing: true
-  - kv:
-      field: auditd.log.sub_kv_enriched
-      field_split: '\s+(?=[^\s]+=)'
-      value_split: '='
-      target_field: auditd.log
-      ignore_missing: true
-  - date:
-      field: auditd.log.epoch
-      target_field: "@timestamp"
-      formats:
-        - UNIX
-      ignore_failure: true
-  - lowercase:
-      field: auditd.log.original_field
-      ignore_missing: true
-  - rename:
-      ignore_failure: true
-      field: auditd.log.old-auid
-      target_field: auditd.log.old_auid
-  - rename:
-      ignore_failure: true
-      field: auditd.log.old-ses
-      target_field: auditd.log.old_ses
+  - pipeline:
+      if: ctx.auditd?.log?.record_type == null
+      name: '{{ IngestPipeline "raw" }}'
   - script:
       tag: script_process_fields
       lang: painless
@@ -1079,7 +1028,27 @@ processors:
                   - change
         types:
           ACCT_LOCK:
-            - event:
+            - copy:
+                - from:
+                    - auid
+                  to: user
+                - from:
+                    - AUID
+                  to: user
+                - from:
+                    - uid
+                  to: user.effective
+                - from:
+                    - UID
+                  to: user.effective
+                - from:
+                    - id
+                    - acct
+                  to: user.target
+                - from:
+                    - ID
+                  to: user.target
+              event:
                 action:
                   - locked-account
                 category:
@@ -1088,7 +1057,27 @@ processors:
                   - user
                   - info
           ACCT_UNLOCK:
-            - event:
+            - copy:
+                - from:
+                    - auid
+                  to: user
+                - from:
+                    - AUID
+                  to: user
+                - from:
+                    - uid
+                  to: user.effective
+                - from:
+                    - UID
+                  to: user.effective
+                - from:
+                    - id
+                    - acct
+                  to: user.target
+                - from:
+                    - ID
+                  to: user.target
+              event:
                 action:
                   - unlocked-account
                 category:
@@ -1102,11 +1091,20 @@ processors:
                     - auid
                   to: user
                 - from:
+                    - AUID
+                  to: user
+                - from:
                     - uid
+                  to: user.effective
+                - from:
+                    - UID
                   to: user.effective
                 - from:
                     - id
                     - acct
+                  to: group
+                - from:
+                    - ID
                   to: group
               event:
                 action:
@@ -1122,11 +1120,20 @@ processors:
                     - auid
                   to: user
                 - from:
+                    - AUID
+                  to: user
+                - from:
                     - uid
+                  to: user.effective
+                - from:
+                    - UID
                   to: user.effective
                 - from:
                     - id
                     - acct
+                  to: user.target
+                - from:
+                    - ID
                   to: user.target
               event:
                 action:
@@ -1389,11 +1396,20 @@ processors:
                     - auid
                   to: user
                 - from:
+                    - AUID
+                  to: user
+                - from:
                     - uid
+                  to: user.effective
+                - from:
+                    - UID
                   to: user.effective
                 - from:
                     - id
                     - acct
+                  to: group
+                - from:
+                    - ID
                   to: group
               event:
                 action:
@@ -1409,11 +1425,20 @@ processors:
                     - auid
                   to: user
                 - from:
+                    - AUID
+                  to: user
+                - from:
                     - uid
+                  to: user.effective
+                - from:
+                    - UID
                   to: user.effective
                 - from:
                     - id
                     - acct
+                  to: user.target
+                - from:
+                    - ID
                   to: user.target
               event:
                 action:
@@ -1718,12 +1743,21 @@ processors:
                     - auid
                   to: user
                 - from:
+                    - AUID
+                  to: user
+                - from:
                     - uid
+                  to: user.effective
+                - from:
+                    - UID
                   to: user.effective
                 - from:
                     - acct
                     - id
                     - uid
+                  to: user.target
+                - from:
+                    - ID
                   to: user.target
               event:
                 action:
@@ -1798,9 +1832,15 @@ processors:
                     - auid
                   to: user
                 - from:
+                    - AUID
+                  to: user
+                - from:
                     - acct
                     - id
                     - uid
+                  to: user.effective
+                - from:
+                    - UID
                   to: user.effective
               event:
                 action:
@@ -1860,9 +1900,15 @@ processors:
                     - auid
                   to: user
                 - from:
+                    - AUID
+                  to: user
+                - from:
                     - acct
                     - id
                     - uid
+                  to: user.effective
+                - from:
+                    - UID
                   to: user.effective
               event:
                 action:
@@ -1982,7 +2028,7 @@ processors:
             for (int j=0; value == null && j<srcList.length; j++) {
               value = base[srcList[j]];
             }
-            if (value != null && value instanceof String) {
+            if (value != null && value instanceof String && value != 'unset' && value != '?') {
               String suffix = value ==~ /[0-9]+/? ".id" : ".name";
               lst.add([
                 "target": act.copy[i]["to"] + suffix,
@@ -2128,6 +2174,80 @@ processors:
       ignore_failure: true
       field: auditd.log.ouid
       target_field: user.owner.id
+  # Map ENRICHED format username/group fields (UID="root", EUID=..., etc.) to ECS.
+  # Only set when the target is unset, and skip placeholder values like "unset" / "?".
+  - set:
+      field: user.name
+      copy_from: auditd.log.UID
+      override: false
+      ignore_empty_value: true
+      if: ctx.auditd?.log?.UID != null && !['?', 'unset'].contains(ctx.auditd.log.UID)
+  - set:
+      field: user.group.name
+      copy_from: auditd.log.GID
+      override: false
+      ignore_empty_value: true
+      if: ctx.auditd?.log?.GID != null && !['?', 'unset'].contains(ctx.auditd.log.GID)
+  - set:
+      field: user.audit.name
+      copy_from: auditd.log.AUID
+      override: false
+      ignore_empty_value: true
+      if: ctx.auditd?.log?.AUID != null && !['?', 'unset'].contains(ctx.auditd.log.AUID)
+  - set:
+      field: user.audit.group.name
+      copy_from: auditd.log.AGID
+      override: false
+      ignore_empty_value: true
+      if: ctx.auditd?.log?.AGID != null && !['?', 'unset'].contains(ctx.auditd.log.AGID)
+  - set:
+      field: user.effective.name
+      copy_from: auditd.log.EUID
+      override: false
+      ignore_empty_value: true
+      if: ctx.auditd?.log?.EUID != null && !['?', 'unset'].contains(ctx.auditd.log.EUID)
+  - set:
+      field: user.effective.group.name
+      copy_from: auditd.log.EGID
+      override: false
+      ignore_empty_value: true
+      if: ctx.auditd?.log?.EGID != null && !['?', 'unset'].contains(ctx.auditd.log.EGID)
+  - set:
+      field: user.filesystem.name
+      copy_from: auditd.log.FSUID
+      override: false
+      ignore_empty_value: true
+      if: ctx.auditd?.log?.FSUID != null && !['?', 'unset'].contains(ctx.auditd.log.FSUID)
+  - set:
+      field: user.filesystem.group.name
+      copy_from: auditd.log.FSGID
+      override: false
+      ignore_empty_value: true
+      if: ctx.auditd?.log?.FSGID != null && !['?', 'unset'].contains(ctx.auditd.log.FSGID)
+  - set:
+      field: user.saved.name
+      copy_from: auditd.log.SUID
+      override: false
+      ignore_empty_value: true
+      if: ctx.auditd?.log?.SUID != null && !['?', 'unset'].contains(ctx.auditd.log.SUID)
+  - set:
+      field: user.saved.group.name
+      copy_from: auditd.log.SGID
+      override: false
+      ignore_empty_value: true
+      if: ctx.auditd?.log?.SGID != null && !['?', 'unset'].contains(ctx.auditd.log.SGID)
+  - set:
+      field: user.owner.name
+      copy_from: auditd.log.OUID
+      override: false
+      ignore_empty_value: true
+      if: ctx.auditd?.log?.OUID != null && !['?', 'unset'].contains(ctx.auditd.log.OUID)
+  - set:
+      field: user.owner.group.name
+      copy_from: auditd.log.OGID
+      override: false
+      ignore_empty_value: true
+      if: ctx.auditd?.log?.OGID != null && !['?', 'unset'].contains(ctx.auditd.log.OGID)
   - rename:
       ignore_failure: true
       field: auditd.log.comm
@@ -2208,6 +2328,21 @@ processors:
       ignore_failure: true
   - set:
       if: (ctx?.auditd?.log?.res != null && !["0", "1", "success", "failed"].contains(ctx.auditd.log.res))
+      field: event.outcome
+      value: "unknown"
+      ignore_failure: true
+  - set:
+      if: (ctx?.event?.outcome == null && ctx?.auditd?.log?.result != null && ["1", "success"].contains(ctx.auditd.log.result))
+      field: event.outcome
+      value: "success"
+      ignore_failure: true
+  - set:
+      if: (ctx?.event?.outcome == null && ctx?.auditd?.log?.result != null && ["0", "failed"].contains(ctx.auditd.log.result))
+      field: event.outcome
+      value: "failure"
+      ignore_failure: true
+  - set:
+      if: (ctx?.event?.outcome == null && ctx?.auditd?.log?.result != null && !["0", "1", "success", "failed"].contains(ctx.auditd.log.result))
       field: event.outcome
       value: "unknown"
       ignore_failure: true
@@ -2317,6 +2452,41 @@ processors:
       field: source.as.organization_name
       target_field: source.as.organization.name
       ignore_missing: true
+  - append:
+      field: related.user
+      value: "{{{ user.name }}}"
+      allow_duplicates: false
+      if: ctx.user?.name != null && ctx.user.name != ''
+  - append:
+      field: related.user
+      value: "{{{ user.audit.name }}}"
+      allow_duplicates: false
+      if: ctx.user?.audit?.name != null && ctx.user.audit.name != ''
+  - append:
+      field: related.user
+      value: "{{{ user.effective.name }}}"
+      allow_duplicates: false
+      if: ctx.user?.effective?.name != null && ctx.user.effective.name != ''
+  - append:
+      field: related.user
+      value: "{{{ user.filesystem.name }}}"
+      allow_duplicates: false
+      if: ctx.user?.filesystem?.name != null && ctx.user.filesystem.name != ''
+  - append:
+      field: related.user
+      value: "{{{ user.saved.name }}}"
+      allow_duplicates: false
+      if: ctx.user?.saved?.name != null && ctx.user.saved.name != ''
+  - append:
+      field: related.user
+      value: "{{{ user.owner.name }}}"
+      allow_duplicates: false
+      if: ctx.user?.owner?.name != null && ctx.user.owner.name != ''
+  - append:
+      field: related.user
+      value: "{{{ user.target.name }}}"
+      allow_duplicates: false
+      if: ctx.user?.target?.name != null && ctx.user.target.name != ''
   - remove:
       field:
         - auditd.log.kv
@@ -2326,6 +2496,7 @@ processors:
         - auditd.log.copy
         - auditd.log.arch
         - auditd.log.res
+        - auditd.log.result
       ignore_failure: true
       ignore_missing: true
 on_failure:
@@ -2334,4 +2505,4 @@ on_failure:
       value: pipeline_error
   - append:
       field: error.message
-      value: Processor "{{{ _ingest.on_failure_processor_type }}}" with tag "{{{ _ingest.on_failure_processor_tag }}}" in pipeline "{{{ _ingest.on_failure_pipeline }}}" failed with message "{{{ _ingest.on_failure_message }}}"
+      value: Processor "{{{ _ingest.on_failure_processor_type }}}" with tag "{{{ _ingest.on_failure_processor_tag }}}" failed with message "{{{ _ingest.on_failure_message }}}"

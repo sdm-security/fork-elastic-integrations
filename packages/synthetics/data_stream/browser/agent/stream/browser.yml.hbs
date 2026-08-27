@@ -26,6 +26,9 @@ tags: {{tags}}
 {{#if source.inline.script}}
 source.inline.script: {{source.inline.script}}
 {{/if}}
+{{#if source.inline.encoding}}
+source.inline.encoding: {{source.inline.encoding}}
+{{/if}}
 {{#if source.project.content}}
 source.project.content: {{source.project.content}}
 {{/if}}
@@ -49,6 +52,9 @@ filter_journeys.tags: {{filter_journeys.tags}}
 {{/if}}
 {{#if ignore_https_errors}}
 ignore_https_errors: {{ignore_https_errors}}
+{{/if}}
+{{#if certificate_error_spki_allowlist}}
+certificate_error_spki_allowlist: {{certificate_error_spki_allowlist}}
 {{/if}}
 {{#if max_attempts}}
 max_attempts: {{max_attempts}}

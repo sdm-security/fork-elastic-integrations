@@ -78,7 +78,7 @@
         "title": "Detected URL Events Summary For IOC Stream [Logs Google Threat Intelligence]"
     },
     "coreMigrationVersion": "8.8.0",
-    "created_at": "2025-06-03T08:43:20.892Z",
+    "created_at": "2026-07-23T10:07:42.791Z",
     "id": "ti_google_threat_intelligence-4907ee04-d1f7-4d33-842e-ecd1b8409f23",
     "managed": true,
     "references": [
@@ -96,16 +96,6 @@
             "id": "logs-*",
             "name": "kibanaSavedObjectMeta.searchSourceJSON.filter[1].meta.index",
             "type": "index-pattern"
-        },
-        {
-            "id": "ti_google_threat_intelligence-security-solution-default",
-            "name": "tag-ref-ti_google_threat_intelligence-security-solution-default",
-            "type": "tag"
-        },
-        {
-            "id": "ti_google_threat_intelligence-security-solution-default",
-            "name": "tag-ref-security-solution-default",
-            "type": "tag"
         }
     ],
     "type": "search",
